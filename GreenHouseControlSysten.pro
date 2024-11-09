@@ -9,11 +9,26 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    Device.cpp \
+    Exhaust.cpp \
+    Fan.cpp \
+    Heater.cpp \
+    IrrigationSystem.cpp \
+    Light.cpp \
+    Sensor.cpp \
+    WaterPump.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Device.h \
+    Exhaust.h \
+    Fan.h \
+    Heater.h \
+    IrrigationSystem.h \
+    Light.h \
+    Sensor.h \
+    WaterPump.h \
     mainwindow.h
 
 FORMS += \
