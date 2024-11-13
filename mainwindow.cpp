@@ -1,14 +1,41 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "Heater.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    heater = new Heater();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete heater;
 }
+void MainWindow:: on_heaterProgressBar_valueChanged(int value){
+    heater->setHeatFlow(value);
+    ui->heatFlowLabel->setText(QString("Heat Flow: %1").arg(value));
+}
+void MainWindow::on_HeaterSwitch_clicked()
+{
+    if(heater->getStatus() == false){
+        heater->turnOn();
+        heater->setHeatFlow(heater->getHeatFlow());
+        ui->HeaterSwitch->setStyleSheet("background-color: green; color: white;");
+    }
+    else{
+        heater->setHeatFlow(0.0);
+        heater->turnOff();
+        ui->HeaterSwitch->setStyleSheet("background-color: red; color: white;");
+    }
+    ui->heaterProgressBar->setMinimum(heater->getMinHeat());
+    ui->heaterProgressBar->setMaximum(heater->getMaxHeat());
+    ui->heaterProgressBar->setValue(heater->getHeatFlow());
+
+    ui->heatFlowLabel->setText(QString("Heat Flow: %1").arg(heater->getHeatFlow()));
+    ui->heaterProgressBar->repaint();
+
+}
+
