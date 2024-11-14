@@ -1,11 +1,24 @@
 //Heater implementation
 
 #include <Heater.h>
-
+#include <fstream>
 Heater::Heater(){
-    this->heatFlow =0.0;
-    this->maxHeatFlow =100.0;
-    this->minHeatFlow = 20.0;
+    string heaterFile = "Heater.txt";
+    ifstream fin;
+    float heat, min, max;
+    fin.open(heaterFile);
+    if(fin.is_open()){
+        fin>>heat;
+        fin>>min;
+        fin>>max;
+        fin.close();
+    }
+    this->setMinHeat(min);
+    this->setMaxHeat(max);
+    this->setHeatFlow(heat);
+   // this->heatFlow =0.0;
+    //this->maxHeatFlow =100.0;
+    //this->minHeatFlow = 20.0;
 }
 Heater::Heater(float currentHeat, float maximum, float minimum){
     this->heatFlow = currentHeat;
@@ -14,7 +27,9 @@ Heater::Heater(float currentHeat, float maximum, float minimum){
 
 }
 void Heater::setHeatFlow(float heat){
-    this->heatFlow = heat;
+    if(heat>getMinHeat() && heat<getMaxHeat()){
+        this->heatFlow = heat;
+    }
 }
 float Heater::getHeatFlow(){
     return this->heatFlow;

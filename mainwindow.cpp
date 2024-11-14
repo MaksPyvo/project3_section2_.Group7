@@ -28,12 +28,12 @@ void MainWindow::on_HeaterSwitch_clicked()
 {
     if(heater->getStatus() == false){
         heater->turnOn();
-        heater->setHeatFlow(heater->getHeatFlow());
+        //heater->setHeatFlow(heater->getHeatFlow());
         ui->HeaterSwitch->setStyleSheet("background-color: green; color: white;");
     }
     else{
-        heater->setHeatFlow(0.0);
         heater->turnOff();
+        heater->setHeatFlow(0.0);
         ui->HeaterSwitch->setStyleSheet("background-color: red; color: white;");
     }
     ui->heaterProgressBar->setMinimum(heater->getMinHeat());
