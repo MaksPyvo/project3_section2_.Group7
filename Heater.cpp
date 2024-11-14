@@ -1,48 +1,56 @@
 //Heater implementation
 
-#include <Heater.h>
-#include <fstream>
+#include "Heater.h"
+#include <QFile>
+#include <QTextStream>
+#include <QString>
 Heater::Heater(){
-    string heaterFile = "Heater.txt";
-    ifstream fin;
-    float heat, min, max;
-    fin.open(heaterFile);
-    if(fin.is_open()){
-        fin>>heat;
-        fin>>min;
-        fin>>max;
-        fin.close();
-    }
-    this->setMinHeat(min);
-    this->setMaxHeat(max);
-    this->setHeatFlow(heat);
-   // this->heatFlow =0.0;
-    //this->maxHeatFlow =100.0;
-    //this->minHeatFlow = 20.0;
+
+    this->heatFlow =70.0;
+    this->maxHeatFlow =100.0;
+    this->minHeatFlow = 0.0;
 }
-Heater::Heater(float currentHeat, float maximum, float minimum){
+Heater::Heater(double currentHeat, double maximum, double minimum){
     this->heatFlow = currentHeat;
     this->maxHeatFlow= maximum;
     this->minHeatFlow = minimum;
 
 }
-void Heater::setHeatFlow(float heat){
+void Heater::setHeatFlow(double heat){
     if(heat>getMinHeat() && heat<getMaxHeat()){
         this->heatFlow = heat;
     }
 }
-float Heater::getHeatFlow(){
+double Heater::getHeatFlow(){
     return this->heatFlow;
 }
-void Heater::setMaxHeat(float max){
+void Heater::setMaxHeat(double max){
     this->maxHeatFlow = max;
 }
-float Heater::getMaxHeat(){
+double Heater::getMaxHeat(){
     return this->maxHeatFlow;
 }
-void Heater::setMinHeat(float min){
+void Heater::setMinHeat(double min){
     this->minHeatFlow = min;
 }
-float Heater::getMinHeat(){
+double Heater::getMinHeat(){
     return this->minHeatFlow;
 }
+ void Heater::ReadFromFile(){
+     QString heat, min, max;
+     QFile file("Heater.txt");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
+         QTextStream in(&file);
+        if(!in.atEnd()){
+            heat = in.readLine();
+            min = in.readLine();
+            max = in.readLine();
+        }
+        file.close();
+    }
+    this->setHeatFlow(heat.toDouble());
+    this->setMinHeat(min.toDouble());
+    this->setMaxHeat(max.toDouble());
+}
+
+

@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QFile>
+#include <QTextStream>
+#include <QString>
 #include "Heater.h"
-
+using namespace std;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -28,20 +31,24 @@ void MainWindow::on_HeaterSwitch_clicked()
 {
     if(heater->getStatus() == false){
         heater->turnOn();
-        //heater->setHeatFlow(heater->getHeatFlow());
+        heater->ReadFromFile();
+        ui->heaterProgressBar->setMinimum(heater->getMinHeat());
+        ui->heaterProgressBar->setMaximum(heater->getMaxHeat());
+        ui->heaterProgressBar->setValue(heater->getHeatFlow());
         ui->HeaterSwitch->setStyleSheet("background-color: green; color: white;");
     }
     else{
         heater->turnOff();
-        heater->setHeatFlow(0.0);
+
+        heater->setHeatFlow(0.0f);
+        ui->heaterProgressBar->setValue(heater->getHeatFlow());
+        ui->heaterProgressBar->repaint();
         ui->HeaterSwitch->setStyleSheet("background-color: red; color: white;");
+
     }
-    ui->heaterProgressBar->setMinimum(heater->getMinHeat());
-    ui->heaterProgressBar->setMaximum(heater->getMaxHeat());
-    ui->heaterProgressBar->setValue(heater->getHeatFlow());
 
     ui->heatFlowLabel->setText(QString("Heat Flow: %1").arg(heater->getHeatFlow()));
-    ui->heaterProgressBar->repaint();
+    ui->heatFlowLabel->repaint();
 
 }
 
