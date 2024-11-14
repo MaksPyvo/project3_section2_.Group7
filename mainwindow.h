@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 #include <QMainWindow>
 #include "Heater.h"
+#include "Light.h"
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,7 @@ public:
 private:
     Ui::MainWindow *ui;
     Heater *heater;
+    Light *light;
 
 
 private slots:
@@ -27,5 +29,6 @@ private slots:
     void on_HeaterSwitch_clicked();
 
     void on_heaterProgressBar_valueChanged(int value);
+    void on_BrighnessBar_valueChanged(int value);
 };
 #endif // MAINWINDOW_H

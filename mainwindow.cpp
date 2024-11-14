@@ -1,12 +1,17 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "Heater.h"
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->setStyleSheet("background-color: lightblue;");
+    ui->HeaterSwitch->setStyleSheet("background-color: white;");
     heater = new Heater();
+
 }
 
 MainWindow::~MainWindow()
@@ -17,6 +22,7 @@ MainWindow::~MainWindow()
 void MainWindow:: on_heaterProgressBar_valueChanged(int value){
     heater->setHeatFlow(value);
     ui->heatFlowLabel->setText(QString("Heat Flow: %1").arg(value));
+
 }
 void MainWindow::on_HeaterSwitch_clicked()
 {
@@ -37,5 +43,12 @@ void MainWindow::on_HeaterSwitch_clicked()
     ui->heatFlowLabel->setText(QString("Heat Flow: %1").arg(heater->getHeatFlow()));
     ui->heaterProgressBar->repaint();
 
+}
+
+
+void MainWindow::on_BrighnessBar_valueChanged(int value)
+{
+    light->setBrightness(value);
+    ui->BrighnessBar->setValue(light->getBrightness());
 }
 
