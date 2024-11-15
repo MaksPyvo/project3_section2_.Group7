@@ -1,0 +1,56 @@
+[33mcommit a340d8417614866e18ca5fece267c4f72a6ad1f2[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: MaksPyvo <pyvovar.maksym.vol@gmail.com>
+Date:   Wed Nov 13 12:11:48 2024 -0500
+
+    Create: Device class with functions
+
+[33mcommit fed518d9dc8a286ed3f8fcbba19a50c08b11f853[m
+Merge: 7f11d74 9631b17
+Author: MaksPyvo <pyvovar.maksym.vol@gmail.com>
+Date:   Sat Nov 9 11:06:59 2024 -0500
+
+    Merge branch 'master' of https://github.com/MaksPyvo/project3_section2_.Group7
+
+[33mcommit 7f11d74b08f9b0ef413e2ceca2deb94dc2c9fb39[m
+Author: MaksPyvo <pyvovar.maksym.vol@gmail.com>
+Date:   Sat Nov 9 10:56:02 2024 -0500
+
+    Create: Structure for the project, created .h and .cpp files which
+    respond to them.
+
+[33mcommit 9631b174d87c196727c7a9c06c2e2366612cfd24[m
+Author: Anh Dung Phan <Aphan5160@conestogac.on.ca>
+Date:   Sat Nov 9 10:35:59 2024 -0500
+
+    update codebase
+
+[33mcommit ab6b8f0df6efdea56d34f6ed486b7f4fe2a38621[m
+Merge: f6bf083 851d0f1
+Author: MaksPyvo <pyvovar.maksym.vol@gmail.com>
+Date:   Sat Nov 9 10:31:27 2024 -0500
+
+    Merge branch 'master' of https://github.com/MaksPyvo/project3_section2_.Group7
+
+[33mcommit f6bf0834d4a188250ecf2918b7e5c4050dae4f8e[m
+Author: MaksPyvo <pyvovar.maksym.vol@gmail.com>
+Date:   Sat Nov 9 10:30:23 2024 -0500
+
+    update codebase structure
+
+[33mcommit 851d0f1288e84ef01b18da41dc05ba0c9b9a174a[m
+Author: MaksPyvo <156695119+MaksPyvo@users.noreply.github.com>
+Date:   Sat Nov 9 10:28:41 2024 -0500
+
+    Update .gitignore
+
+[33mcommit 0fd67c1f47e1504d3983dda8fc4eb3098fd2f178[m
+Author: MaksPyvo <pyvovar.maksym.vol@gmail.com>
+Date:   Sat Nov 9 10:15:47 2024 -0500
+
+    create project
+
+[33mcommit e727bf7142043efa82eac60d0f3c783e74dd717f[m
+Author: Maksym <pyvovar.maksym.vol@gmail.com>
+Date:   Sat Nov 9 10:01:54 2024 -0500
+
+    First commit
