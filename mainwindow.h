@@ -17,6 +17,22 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void on_HeaterSwitch_clicked();
+
+    void on_LightButton_clicked();
+
+    void on_FanSwitch_clicked();
+    void on_ExhaustSwitch_clicked();
+
+
+    void on_WaterPumpSwitch_clicked();
+
+    void on_IrrigationSwitch_clicked();
+
+    void on_TemperatureInput_textChanged();
+
+
 private:
     Ui::MainWindow *ui;
 };
