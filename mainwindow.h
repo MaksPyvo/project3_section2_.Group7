@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "Fan.h"
+#include "Exhaust.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -32,8 +34,19 @@ private slots:
 
     void on_TemperatureInput_textChanged();
 
+    void on_OpenExhaustBtn_clicked();
+
+    void on_CloseExhaustBtn_clicked();
+
+    void on_SpeedLowLevelCheckbox_clicked(bool checked);
+
+    void on_SpeedMediumLevelCheckbox_clicked(bool checked);
+
+    void on_SpeedHighLevelCheckbox_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;
+    Fan *fanObj;
+    Exhaust *exhaustObj;
 };
 #endif // MAINWINDOW_H

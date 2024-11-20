@@ -25,7 +25,7 @@ void Exhaust::readDataFromFile() {
     bool fileOpened = file.open(QIODevice::ReadOnly | QIODevice::Text);
     if (!fileOpened) {
         // Handle file open error
-        std::cerr << "Error opening file: 'fan-data.txt'" << std::endl;
+        std::cerr << "Error opening file: 'fan-data.txt'\n" << std::endl;
         return;
     }
 
@@ -42,7 +42,7 @@ void Exhaust::writeDataToFile() {
     bool fileOpened = file.open(QIODevice::WriteOnly);
     if (!fileOpened) {
         // Handle file open error
-        std::cerr << "Error opening file: 'fan-data.txt'" << std::endl;
+        std::cerr << "Error opening file: 'fan-data.txt'\n" << std::endl;
         return;
     }
 
