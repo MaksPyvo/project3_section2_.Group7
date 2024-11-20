@@ -7,18 +7,18 @@
 //Heater class inter face
 class Heater:public Device{
 private:
-    double heatFlow;
-    double maxHeatFlow;
-    double minHeatFlow;
+    int heatFlow;
+    int maxHeatFlow;
+    int minHeatFlow;
 public:
     Heater();
-    Heater(double currentHeat, double maximum, double minimum);
-    void setHeatFlow(double heat);
-    double getHeatFlow();
-    void setMaxHeat(double max);
-    double getMaxHeat();
-    void setMinHeat(double min);
-    double getMinHeat();
+    Heater(int currentHeat, int maximum, int minimum);
+    void setHeatFlow(int heat);
+    int getHeatFlow();
+    void setMaxHeat(int max);
+    int getMaxHeat();
+    void setMinHeat(int min);
+    int getMinHeat();
     void ReadFromFile();
 };
 #endif // HEATER_H

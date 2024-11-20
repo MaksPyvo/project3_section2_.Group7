@@ -6,34 +6,34 @@
 #include <QString>
 Heater::Heater(){
 
-    this->heatFlow =70.0;
-    this->maxHeatFlow =100.0;
-    this->minHeatFlow = 0.0;
+    this->heatFlow =70;
+    this->maxHeatFlow =100;
+    this->minHeatFlow = 0;
 }
-Heater::Heater(double currentHeat, double maximum, double minimum){
+Heater::Heater(int currentHeat, int maximum, int minimum){
     this->heatFlow = currentHeat;
     this->maxHeatFlow= maximum;
     this->minHeatFlow = minimum;
 
 }
-void Heater::setHeatFlow(double heat){
-    if(heat>getMinHeat() && heat<getMaxHeat()){
+void Heater::setHeatFlow(int heat){
+    if(heat>=getMinHeat() && heat<getMaxHeat()){
         this->heatFlow = heat;
     }
 }
-double Heater::getHeatFlow(){
+int Heater::getHeatFlow(){
     return this->heatFlow;
 }
-void Heater::setMaxHeat(double max){
+void Heater::setMaxHeat(int max){
     this->maxHeatFlow = max;
 }
-double Heater::getMaxHeat(){
+int Heater::getMaxHeat(){
     return this->maxHeatFlow;
 }
-void Heater::setMinHeat(double min){
+void Heater::setMinHeat(int min){
     this->minHeatFlow = min;
 }
-double Heater::getMinHeat(){
+int Heater::getMinHeat(){
     return this->minHeatFlow;
 }
 void Heater::ReadFromFile(){
@@ -48,7 +48,8 @@ void Heater::ReadFromFile(){
         }
         file.close();
     }
-    this->setHeatFlow(heat.toDouble());
-    this->setMinHeat(min.toDouble());
-    this->setMaxHeat(max.toDouble());
+
+    this->setHeatFlow(heat.toInt());
+    this->setMinHeat(min.toInt());
+    this->setMaxHeat(max.toInt());
 }

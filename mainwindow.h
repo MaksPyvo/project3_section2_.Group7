@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "Heater.h"
 QT_BEGIN_NAMESPACE
+
 namespace Ui {
 class MainWindow;
 }
@@ -33,7 +34,10 @@ private slots:
     void on_TemperatureInput_textChanged();
 
 
+    void on_HeaterScrollBar_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
+    Heater *heater;
 };
 #endif // MAINWINDOW_H
