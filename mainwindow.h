@@ -2,7 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-
+#include "Light.h"
+#include <QGroupBox>
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -32,8 +33,10 @@ private slots:
 
     void on_TemperatureInput_textChanged();
 
+    void flashGroupBox(QGroupBox *groupBox);
 
 private:
     Ui::MainWindow *ui;
+    Light *light;
 };
 #endif // MAINWINDOW_H
