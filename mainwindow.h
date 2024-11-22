@@ -34,7 +34,8 @@ private slots:
     void on_TemperatureInput_textChanged();
 
     void flashGroupBox(QGroupBox *groupBox);
-
+    void enableCheckBox();
+    void disableCheckBox();
 private:
     Ui::MainWindow *ui;
     Light *light;

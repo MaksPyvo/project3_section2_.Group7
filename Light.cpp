@@ -46,27 +46,21 @@ void Light::readFromFile(QString filePath) {
     }
 
     fileInput.close();
-
-    // Validate and apply values
-    bool ok;
-    int brightnessValue = brightness.toInt(&ok);
-    if (ok) {
-        this->setBrightness(brightnessValue);
-    } else {
-        qWarning() << "Invalid brightness value in file:" << brightness;
+    this->setBrightness(brightness.toInt());
+    this->setMinBrightness(min.toInt());
+    this->setMaxBrightness(max.toInt());
+}
+void Light::writeToFile(){
+    QFile fileOutPut("LightOut.txt");
+    if(fileOutPut.open(QIODevice::WriteOnly|QIODevice::Text)){
+        QTextStream out(&fileOutPut);
+        out << this->getBrightness()<<"\n";
+        out << this->getMinBrightness()<<"\n";
+        out << this->getMaxBrightness()<<"\n";
+        qDebug()<<"Light was saved on file.";
+        fileOutPut.close();
     }
-
-    int minValue = min.toInt(&ok);
-    if (ok) {
-        this->setMinBrightness(minValue);
-    } else {
-        qWarning() << "Invalid minimum brightness value in file:" << min;
-    }
-
-    int maxValue = max.toInt(&ok);
-    if (ok) {
-        this->setMaxBrightness(maxValue);
-    } else {
-        qWarning() << "Invalid maximum brightness value in file:" << max;
+    else{
+        qDebug()<<"Failed to write to LightOut.txt";
     }
 }

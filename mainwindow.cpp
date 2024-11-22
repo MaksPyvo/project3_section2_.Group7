@@ -28,53 +28,75 @@ void MainWindow::on_LightButton_clicked()
     ui->LightError->setText(" ");
     if(!(light->getStatus())){
         light->turnOn();
-        light->readFromFile("C:/Users/ginbo/Desktop/project3_section2_.Group7/Light.txt");
+        light->readFromFile("Light.txt");
+        enableCheckBox();
         if(light->getBrightness()>0 && light->getBrightness()<=35)
         {
             if(!(ui->LowBrightness->isChecked())){
                 ui->LowBrightness->click();
+                ui->MediumBrightness->setDisabled(true);
+                ui->HighBrightness->setDisabled(true);
             }
 
             ui->LightProgressBar->setStyleSheet(
                 "QProgressBar::chunk {"
                 "    background-color: lightblue;"
                 "}");
+            ui->LightButton->setStyleSheet("background-color: green; color: white;");
         }
         else if(light->getBrightness()>30 && light->getBrightness()<=60)
         {
             if(!(ui->MediumBrightness->isChecked())){
                 ui->MediumBrightness->click();
+                ui->LowBrightness->setDisabled(true);
+                ui->HighBrightness->setDisabled(true);
             }
 
-            ui->LightProgressBar->setStyleSheet(
-                "QProgressBar::chunk {"
-                "    background-color: yellow;"
-                "}");
+            ui->LightProgressBar->setStyleSheet("QProgressBar::chunk {""    background-color: yellow;""}");
+            ui->LightButton->setStyleSheet("background-color: green; color: white;");
         }
         else if (light->getBrightness()>60 && light->getBrightness()<light->getMaxBrightness())
         {
             if(!(ui->HighBrightness->isChecked())){
                 ui->HighBrightness->click();
+                ui->MediumBrightness->setDisabled(true);
+                ui->LowBrightness->setDisabled(true);
             }
 
             ui->LightProgressBar->setStyleSheet(
                 "QProgressBar::chunk {"
                 "    background-color: orange;"
                 "}");
+            ui->LightButton->setStyleSheet("background-color: green; color: white;");
         }
+
         else{
 
             flashGroupBox(ui->LightBox);
             ui->LightError->setText("Error: Invalid input");
+            light->turnOff();
+            light->setBrightness(0);
+            ui->LightButton->setStyleSheet("background-color: Red; color: white;");
+            if(ui->LowBrightness->isChecked()){
+                ui->LowBrightness->setChecked(false);
+            }
+            if(ui->MediumBrightness->isChecked()){
+                ui->MediumBrightness->setChecked(false);
+            }
+            if(ui->HighBrightness->isChecked()){
+                ui->HighBrightness->setChecked(false);
+            }
+            ui->LightProgressBar->setValue(light->getBrightness());
         }
 
-        ui->LightButton->setStyleSheet("background-color: green; color: white;");
+        //ui->LightButton->setStyleSheet("background-color: green; color: white;");
         ui->LightProgressBar->setValue(light->getBrightness());
-
     }
     else{
+
         light->turnOff();
         light->setBrightness(0);
+        disableCheckBox();
          ui->LightButton->setStyleSheet("background-color: Red; color: white;");
         if(ui->LowBrightness->isChecked()){
              ui->LowBrightness->setChecked(false);
@@ -88,6 +110,17 @@ void MainWindow::on_LightButton_clicked()
         ui->LightProgressBar->setValue(light->getBrightness());
 
     }
+    light->writeToFile();
+}
+void MainWindow::enableCheckBox(){
+    ui->LowBrightness->setDisabled(false);
+    ui->MediumBrightness->setDisabled(false);
+    ui->HighBrightness->setDisabled(false);
+}
+void MainWindow::disableCheckBox(){
+    ui->LowBrightness->setDisabled(true);
+    ui->MediumBrightness->setDisabled(true);
+    ui->HighBrightness->setDisabled(true);
 }
 //Fan class below this
 void MainWindow::on_FanSwitch_clicked()
@@ -134,7 +167,7 @@ void MainWindow::flashGroupBox(QGroupBox *groupBox) {
 
         // Increment the count
         count++;
-        qDebug() << "Flashing: " << count;
+       // qDebug() << "Flashing: " << count;
 
         // Stop the timer after 6 toggles (3 flashes)
         if (count >= 6) {

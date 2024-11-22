@@ -15,6 +15,7 @@ public:
     void setMaxBrightness(int);
     int getMaxBrightness();
     void readFromFile(QString filePath);
+    void writeToFile();
 
 };
 #endif // LIGHT_H
