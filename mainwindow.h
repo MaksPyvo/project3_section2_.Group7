@@ -5,6 +5,8 @@
 #include <QTimer>
 #include "Sensor.h"
 #include "Heater.h"
+#include "Light.h"
+#include <QGroupBox>
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -36,13 +38,14 @@ private slots:
 
     void on_HeaterScrollBar_valueChanged(int value);
 
-
 public slots:
     void UpdateTemperatureSensor();
     void UpdateHumiditySensor();
     void UpdateIlluminationSensor();
     void UpdateMoistureSensor();
-
+    void flashGroupBox(QGroupBox *groupBox);
+    void enableCheckBox();
+    void disableCheckBox();
 private:
     Ui::MainWindow *ui;
     Sensor *TemperatureSensor;
@@ -54,5 +57,6 @@ private:
     QTimer *MoistureTimer;
     QTimer *IlluminationTimer;
     Heater *heater;
+    Light *light;
 };
 #endif // MAINWINDOW_H

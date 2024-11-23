@@ -1,6 +1,5 @@
 QT       += core gui
 QT += testlib
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -18,6 +17,7 @@ SOURCES += \
     Light.cpp \
     Sensor.cpp \
     UnitTestHeater.cpp \
+    UnitTestLight.cpp \
     WaterPump.cpp \
     main.cpp \
     mainwindow.cpp
@@ -31,6 +31,7 @@ HEADERS += \
     Light.h \
     Sensor.h \
     UnitTestHeater.h \
+    UnitTestLight.h \
     WaterPump.h \
     mainwindow.h
 

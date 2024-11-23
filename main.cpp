@@ -4,6 +4,7 @@
 //#include <QLoggingCategory>
 //#include <QCoreApplication>
 #include "UnitTestHeater.h"
+#include "UnitTestLight.h"
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.*=false");
@@ -11,6 +12,8 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
     UnitTestHeater unitTestHeater;
-    return QTest::qExec(&unitTestHeater, argc, argv);
+    QTest::qExec(&unitTestHeater, argc, argv);
+    UnitTestLight unitTestLight;
+    QTest::qExec(&unitTestLight, argc, argv);
     return a.exec();
 }
