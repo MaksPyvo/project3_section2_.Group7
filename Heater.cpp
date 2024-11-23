@@ -4,9 +4,10 @@
 #include <QFile>
 #include <QTextStream>
 #include <QString>
+#include <QDebug>
 Heater::Heater(){
 
-    this->heatFlow =70;
+    this->heatFlow =0;
     this->maxHeatFlow =100;
     this->minHeatFlow = 0;
 }
@@ -47,9 +48,27 @@ void Heater::ReadFromFile(){
             max = in.readLine();
         }
         file.close();
+        this->setHeatFlow(heat.toInt());
+        this->setMinHeat(min.toInt());
+        this->setMaxHeat(max.toInt());
     }
 
-    this->setHeatFlow(heat.toInt());
-    this->setMinHeat(min.toInt());
-    this->setMaxHeat(max.toInt());
+    else{
+        qDebug()<<"ERROR: Reading Heater data to file";
+    }
+
+}
+
+void Heater::WriteToFile(){
+    QFile fileOutPut("Temperature.txt");
+    if(fileOutPut.open(QIODevice::WriteOnly|QIODevice::Text)){
+        QTextStream out(&fileOutPut);
+        out<<this->getHeatFlow()<<"\n";
+        out<<this->getMinHeat()<<"\n";
+        out<<this->getMaxHeat()<<"\n";
+        fileOutPut.close();
+    }
+    else{
+        qDebug()<<"ERROR: saving Heater data to file";
+    }
 }

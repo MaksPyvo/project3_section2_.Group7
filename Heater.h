@@ -20,5 +20,6 @@ public:
     void setMinHeat(int min);
     int getMinHeat();
     void ReadFromFile();
+    void WriteToFile();
 };
 #endif // HEATER_H
