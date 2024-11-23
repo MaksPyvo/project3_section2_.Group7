@@ -8,18 +8,18 @@ class Sensor {
 private:
     string name;
     string unitOfMeasurement;
-    string readingFileName;
+    char* readingFileName;
     int currentValue;
 
 public:
     // Default constructor
     Sensor();
-    Sensor(string name,string unitOfMeasurement,string readingFileName, int currentValue);
+    Sensor(string name,string unitOfMeasurement,char* readingFileName, int currentValue);
 
     // Setters
     void setName(string name);
     void setUnitOfMeasurement(string unitOfMeasurement);
-    void setReadingFileName(string readingFileName);
+    void setReadingFileName(char* readingFileName);
     void setCurrentValue(int value);
 
     // Getters

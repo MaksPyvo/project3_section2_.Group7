@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QTimer>
+#include "Sensor.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -17,7 +19,43 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
+private slots:
+    void on_HeaterSwitch_clicked();
+
+    void on_LightButton_clicked();
+
+    void on_FanSwitch_clicked();
+    void on_ExhaustSwitch_clicked();
+
+
+    void on_WaterPumpSwitch_clicked();
+
+    void on_IrrigationSwitch_clicked();
+
+
+
+
+
+
+
+
+
+public slots:
+    void UpdateTemperatureSensor();
+    void UpdateHumiditySensor();
+    void UpdateIlluminationSensor();
+    void UpdateMoistureSensor();
+
 private:
     Ui::MainWindow *ui;
+    Sensor *TemperatureSensor;
+    Sensor *HumiditySensor;
+    Sensor *IlluminationSensor;
+    Sensor *MoistureSensor;
+    QTimer *TemperatureTimer;
+    QTimer *HumidityTimer;
+    QTimer *MoistureTimer;
+    QTimer *IlluminationTimer;
 };
 #endif // MAINWINDOW_H

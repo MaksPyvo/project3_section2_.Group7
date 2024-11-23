@@ -1,6 +1,7 @@
 #include "Sensor.h"
-#include <fstream>
-#include <iostream>
+#include <QFile>
+#include <QTextStream>
+#include <QString>
 
 using namespace std;
 
@@ -8,11 +9,11 @@ using namespace std;
 Sensor::Sensor(){
     this->name="Undefined Sensor";
     this->unitOfMeasurement="undefined unit of measurement";
-    this->readingFileName="undefined file name";
+    this->readingFileName={0};
     this->currentValue=-1;
 }
 // parameterized constructor
-Sensor::Sensor(string name,string unitOfMeasurement,string readingFileName, int currentValue){
+Sensor::Sensor(string name,string unitOfMeasurement,char* readingFileName, int currentValue){
     this->name=name;
     this->unitOfMeasurement=unitOfMeasurement;
     this->readingFileName=readingFileName;
@@ -29,7 +30,7 @@ void Sensor::setUnitOfMeasurement(string unitOfMeasurement) {
     this->unitOfMeasurement = unitOfMeasurement;
 }
 
-void Sensor::setReadingFileName(string readingFileName) {
+void Sensor::setReadingFileName(char* readingFileName) {
     this->readingFileName = readingFileName;
 }
 
@@ -52,15 +53,17 @@ string Sensor::getUnitOfMeasurement(){
 
 // Function to read data from file
 void Sensor::readDataFromFile() {
-    ifstream fin(readingFileName);
-    if (fin.is_open()) {
-        int currentReading;
-        if (fin >> currentReading) {
-            currentValue = currentReading;
-        } else {
-            currentValue = -100; // Error reading value
+    QFile file(readingFileName);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream in(&file);
+        bool check;
+        QString currentValue = in.readLine();
+        this->currentValue=currentValue.toInt(&check);
+        if (check==false) {
+            this->currentValue = -100; // Error reading value
         }
-        fin.close();
+        file.close();
+
     } else {
         currentValue = -100; // Error opening file
     }
