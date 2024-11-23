@@ -9,8 +9,9 @@ private:
 
 public:
     Fan();
-    void setSpeedLevel(int speed);
     int getSpeedLevel();
+    void setSpeedLevel(int speed);
+    void changeTemperature();
     void readDataFromFile();
     void writeDataToFile();
 };

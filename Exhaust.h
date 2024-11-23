@@ -11,6 +11,7 @@ public:
     Exhaust();
     void openExhaust();
     void closeExhaust();
+    void changeHumidityLevel();
     bool checkIfExhaustOpened();
     void readDataFromFile();
     void writeDataToFile();

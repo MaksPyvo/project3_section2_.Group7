@@ -48,5 +48,6 @@ private:
     Ui::MainWindow *ui;
     Fan *fanObj;
     Exhaust *exhaustObj;
+    QTimer *timer;
 };
 #endif // MAINWINDOW_H

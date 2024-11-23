@@ -9,10 +9,12 @@ Exhaust::Exhaust() : isOpened(false) {}
 
 void Exhaust::openExhaust() {
     isOpened = true;
+    changeHumidityLevel();
 }
 
 void Exhaust::closeExhaust() {
     isOpened = false;
+    changeHumidityLevel();
 }
 
 bool Exhaust::checkIfExhaustOpened() {
@@ -30,9 +32,10 @@ void Exhaust::readDataFromFile() {
     }
 
     QTextStream in(&file);
-    string isOpenedStr = in.readAll().toStdString();
+    string isOpenedStr = in.readLine().toStdString();
     isOpened = std::stoi(isOpenedStr);
     file.close();
+    changeHumidityLevel();
 }
 
 
@@ -48,5 +51,18 @@ void Exhaust::writeDataToFile() {
 
     QTextStream out(&file);
     out << isOpened;
+    file.close();
+}
+
+void Exhaust::changeHumidityLevel() {
+    QFile file("Humidity.txt");
+    while (!file.open(QIODevice::WriteOnly)) {
+        // Handle file open error
+        std::cerr << "Error opening file: 'Humidity.txt'" << std::endl;
+    }
+
+    int humidity = isOpened ? 50 : 75;
+    QTextStream out(&file);
+    out << humidity;
     file.close();
 }
