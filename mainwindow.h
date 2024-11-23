@@ -7,6 +7,9 @@
 #include "Heater.h"
 #include "Light.h"
 #include <QGroupBox>
+#include "Fan.h"
+#include "Exhaust.h"
+
 QT_BEGIN_NAMESPACE
 
 namespace Ui {
@@ -38,6 +41,16 @@ private slots:
 
     void on_HeaterScrollBar_valueChanged(int value);
 
+    void on_OpenExhaustBtn_clicked();
+
+    void on_CloseExhaustBtn_clicked();
+
+    void on_SpeedLowLevelCheckbox_clicked(bool checked);
+
+    void on_SpeedMediumLevelCheckbox_clicked(bool checked);
+
+    void on_SpeedHighLevelCheckbox_clicked(bool checked);
+
 public slots:
     void UpdateTemperatureSensor();
     void UpdateHumiditySensor();
@@ -58,5 +71,8 @@ private:
     QTimer *IlluminationTimer;
     Heater *heater;
     Light *light;
+    Fan *fanObj;
+    Exhaust *exhaustObj;
+    QTimer *timer;
 };
 #endif // MAINWINDOW_H
