@@ -4,8 +4,9 @@
 #include <QMainWindow>
 #include <QTimer>
 #include "Sensor.h"
-
+#include "Heater.h"
 QT_BEGIN_NAMESPACE
+
 namespace Ui {
 class MainWindow;
 }
@@ -33,12 +34,7 @@ private slots:
 
     void on_IrrigationSwitch_clicked();
 
-
-
-
-
-
-
+    void on_HeaterScrollBar_valueChanged(int value);
 
 
 public slots:
@@ -57,5 +53,6 @@ private:
     QTimer *HumidityTimer;
     QTimer *MoistureTimer;
     QTimer *IlluminationTimer;
+    Heater *heater;
 };
 #endif // MAINWINDOW_H
