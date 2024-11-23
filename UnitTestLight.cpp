@@ -1,7 +1,6 @@
 
 #include "UnitTestLight.h"
 
-#include "unittestlight.h"
 
 void UnitTestLight::testDefaultConstructor() {
     Light light;
