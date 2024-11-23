@@ -1,9 +1,9 @@
 #ifndef UNITTESTHEATER_H
 #define UNITTESTHEATER_H
-#include "Heater.h"
+
 #include <QObject>
 #include <QtTest/QtTest>
-
+#include "Heater.h"
 
 class UnitTestHeater : public QObject {
     Q_OBJECT
