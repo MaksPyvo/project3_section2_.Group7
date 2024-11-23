@@ -1,5 +1,7 @@
+#pragma once
 #ifndef HEATER_H
 #define HEATER_H
+
 #include "Device.h"
 #include <QFile>
 #include <QTextStream>

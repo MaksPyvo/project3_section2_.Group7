@@ -17,6 +17,7 @@ SOURCES += \
     Light.cpp \
     Sensor.cpp \
     UnitTestHeater.cpp \
+    UnitTestHeater.cpp \
     WaterPump.cpp \
     main.cpp \
     mainwindow.cpp
@@ -29,6 +30,7 @@ HEADERS += \
     IrrigationSystem.h \
     Light.h \
     Sensor.h \
+    UnitTestHeater.h \
     UnitTestHeater.h \
     WaterPump.h \
     mainwindow.h
