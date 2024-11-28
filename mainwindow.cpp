@@ -108,8 +108,8 @@ void MainWindow::on_IrrigationSwitch_clicked()
 // Heater classs
 void MainWindow::on_HeaterSwitch_clicked()
 {
+    if (fanObj->getStatus()) return;
     //if switch is off turn on and vice versa
-
     if(!heater->getStatus()){
         if(!fanObj->getStatus()){
         heater->turnOn();
@@ -119,6 +119,7 @@ void MainWindow::on_HeaterSwitch_clicked()
          ui->HeaterScrollBar->setValue(static_cast<int>(heater->getHeatFlow()));
         heater->WriteToFile();
         }
+        ui->FanSwitch->setDisabled(true);
     }
     else{
         heater->turnOff();
@@ -127,6 +128,7 @@ void MainWindow::on_HeaterSwitch_clicked()
         qDebug() << "Current Heat Flow after turning off:" << heater->getHeatFlow();
         ui->HeaterSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
         ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
+        ui->FanSwitch->setDisabled(false);
     }
 
 
@@ -308,6 +310,7 @@ void MainWindow::on_HighBrightness_clicked(bool checked)
 //Fan class below this
 void MainWindow::on_FanSwitch_clicked()
 {
+    if (heater->getStatus()) return;
     if (fanObj->getStatus()) {
         // Turn off exhaust device
         fanObj->writeDataToFile();
@@ -325,6 +328,7 @@ void MainWindow::on_FanSwitch_clicked()
 
         // Change switch button color
         ui->FanSwitch->setStyleSheet("background-color: red; color: white;");
+        ui->HeaterSwitch->setDisabled(false);
     }
     else {
         // Turn on Fan
@@ -345,6 +349,7 @@ void MainWindow::on_FanSwitch_clicked()
 
         // Change switch button color
         ui->FanSwitch->setStyleSheet("background-color: green; color: white;");
+        ui->HeaterSwitch->setDisabled(true);
     }
 }
 

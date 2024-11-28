@@ -10,6 +10,7 @@ Fan::Fan() : speedLevel(0)  {}
 
 void Fan::setSpeedLevel(int speed) {
     if (speed >= 0 && speed <= 3) {
+        previousSpeedLevel = speedLevel;
         speedLevel = speed;
         changeTemperature();
     }
@@ -19,17 +20,23 @@ void Fan::changeTemperature() {
     if (speedLevel == 0) return;
 
     QFile file("Temperature.txt");
-    while (!file.open(QIODevice::ReadWrite)) {
+    if (!file.open(QIODevice::ReadWrite)) {
         // Handle file open error
         std::cerr << "Error opening file: 'Temperature.txt'" << std::endl;
+        return;
     }
 
     QTextStream in(&file);
     int temperature = in.readLine().toInt();
-    if (speedLevel == 1) temperature *= 0.9;
-    if (speedLevel == 2) temperature *= 0.7;
-    if (speedLevel == 3) temperature *= 0.5;
-
+    int min = in.readLine().toInt();
+    int max = in.readLine().toInt();
+    if (speedLevel > previousSpeedLevel) {
+        temperature *= 1 - (speedLevel - previousSpeedLevel) * 0.15;
+    } else {
+        temperature *= 1 + (previousSpeedLevel - speedLevel) * 0.2;
+    }
+    if(temperature < min) temperature = min;
+    if(temperature > max) temperature = max;
     QTextStream out(&file);
     out << temperature;
     file.close();

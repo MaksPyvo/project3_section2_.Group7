@@ -6,6 +6,7 @@
 class Fan : public Device {
 private:
     int speedLevel;
+    int previousSpeedLevel = 0;
 
 public:
     Fan();
