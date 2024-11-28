@@ -9,7 +9,8 @@
 #include "qnamespace.h"
 #include <iostream>
 
-
+#include <QPixmap>
+#include <QDir>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -44,27 +45,32 @@ MainWindow::MainWindow(QWidget *parent)
     ui->SpeedLowLevelCheckbox->setDisabled(true);
     ui->SpeedMediumLevelCheckbox->setDisabled(true);
     ui->SpeedHighLevelCheckbox->setDisabled(true);
+    disableCheckBox();
 }
-
 
 MainWindow::~MainWindow()
 {
-    delete ui;
+
     delete light;
     delete fanObj;
     delete exhaustObj;
+    delete heater;
+    delete ui;
 }
 // Heater classs
 void MainWindow::on_HeaterSwitch_clicked()
 {
     //if switch is off turn on and vice versa
+
     if(!heater->getStatus()){
+        if(!fanObj->getStatus()){
         heater->turnOn();
         heater->ReadFromFile();
-        //heater->setHeatFlow(50);
         ui->HeaterSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
         ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
          ui->HeaterScrollBar->setValue(static_cast<int>(heater->getHeatFlow()));
+        heater->WriteToFile();
+        }
     }
     else{
         heater->turnOff();
@@ -74,7 +80,7 @@ void MainWindow::on_HeaterSwitch_clicked()
         ui->HeaterSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
         ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
     }
-    heater->WriteToFile();
+
 
 }
 void MainWindow::on_HeaterScrollBar_valueChanged(int value)
@@ -96,43 +102,36 @@ void MainWindow::on_LightButton_clicked()
         light->turnOn();
         light->readFromFile("Light.txt");
         enableCheckBox();
-        if(light->getBrightness()>0 && light->getBrightness()<=35)
+        if(light->getBrightness()>=light->getMinBrightness() && light->getBrightness()<=light->getMaxBrightness()*.3)
         {
             if(!(ui->LowBrightness->isChecked())){
                 ui->LowBrightness->click();
-                ui->MediumBrightness->setDisabled(true);
-                ui->HighBrightness->setDisabled(true);
+                //ui->MediumBrightness->setDisabled(true);
+                //ui->HighBrightness->setDisabled(true);
             }
 
-            ui->LightProgressBar->setStyleSheet(
-                "QProgressBar::chunk {"
-                "    background-color: lightblue;"
-                "}");
+            setBarToLow();
             ui->LightButton->setStyleSheet("background-color: green; color: white;");
         }
-        else if(light->getBrightness()>30 && light->getBrightness()<=60)
+        else if(light->getBrightness()>light->getMaxBrightness()*.3 && light->getBrightness()<=light->getMaxBrightness()*.6)
         {
             if(!(ui->MediumBrightness->isChecked())){
                 ui->MediumBrightness->click();
-                ui->LowBrightness->setDisabled(true);
-                ui->HighBrightness->setDisabled(true);
+                //ui->LowBrightness->setDisabled(true);
+                //ui->HighBrightness->setDisabled(true);
             }
 
-            ui->LightProgressBar->setStyleSheet("QProgressBar::chunk {""    background-color: yellow;""}");
+            setBarToMedium();
             ui->LightButton->setStyleSheet("background-color: green; color: white;");
         }
-        else if (light->getBrightness()>60 && light->getBrightness()<light->getMaxBrightness())
+        else if (light->getBrightness()>light->getMaxBrightness()*.3 && light->getBrightness()<light->getMaxBrightness())
         {
             if(!(ui->HighBrightness->isChecked())){
                 ui->HighBrightness->click();
-                ui->MediumBrightness->setDisabled(true);
-                ui->LowBrightness->setDisabled(true);
+                //ui->MediumBrightness->setDisabled(true);
+               // ui->LowBrightness->setDisabled(true);
             }
-
-            ui->LightProgressBar->setStyleSheet(
-                "QProgressBar::chunk {"
-                "    background-color: orange;"
-                "}");
+            setBarToHigh();
             ui->LightButton->setStyleSheet("background-color: green; color: white;");
         }
 
@@ -142,6 +141,8 @@ void MainWindow::on_LightButton_clicked()
             ui->LightError->setText("Error: Invalid input");
             light->turnOff();
             light->setBrightness(0);
+            light->setMinBrightness(0);
+            light->setMaxBrightness(100);
             ui->LightButton->setStyleSheet("background-color: Red; color: white;");
             if(ui->LowBrightness->isChecked()){
                 ui->LowBrightness->setChecked(false);
@@ -153,10 +154,14 @@ void MainWindow::on_LightButton_clicked()
                 ui->HighBrightness->setChecked(false);
             }
             ui->LightProgressBar->setValue(light->getBrightness());
+            disableCheckBox();
+            light->writeToFile("Light.txt");
         }
 
         //ui->LightButton->setStyleSheet("background-color: green; color: white;");
         ui->LightProgressBar->setValue(light->getBrightness());
+        light->writeToFile("LightOut.txt");
+
     }
     else{
 
@@ -176,7 +181,25 @@ void MainWindow::on_LightButton_clicked()
         ui->LightProgressBar->setValue(light->getBrightness());
 
     }
-    light->writeToFile();
+
+}
+void MainWindow::setBarToLow(){
+    ui->LightProgressBar->setStyleSheet(
+        "QProgressBar::chunk {"
+        "    background-color: lightblue;"
+        "}");
+}
+void MainWindow::setBarToMedium(){
+    ui->LightProgressBar->setStyleSheet(
+        "QProgressBar::chunk {"
+        "    background-color: yellow;"
+        "}");
+}
+void MainWindow::setBarToHigh(){
+    ui->LightProgressBar->setStyleSheet(
+        "QProgressBar::chunk {"
+        "    background-color: orange;"
+        "}");
 }
 void MainWindow::enableCheckBox(){
     ui->LowBrightness->setDisabled(false);
@@ -184,10 +207,57 @@ void MainWindow::enableCheckBox(){
     ui->HighBrightness->setDisabled(false);
 }
 void MainWindow::disableCheckBox(){
+
     ui->LowBrightness->setDisabled(true);
     ui->MediumBrightness->setDisabled(true);
     ui->HighBrightness->setDisabled(true);
 }
+void MainWindow::on_LowBrightness_clicked(bool checked)
+{
+    if(checked){
+        light->setBrightness(light->getMaxBrightness()*.25);
+        ui->LowBrightness->setCheckState(Qt::CheckState::Checked);
+        ui->MediumBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->HighBrightness->setCheckState(Qt::CheckState::Unchecked);
+    }
+    ui->LightProgressBar->setValue(light->getBrightness());
+    setBarToLow();
+    light->writeToFile("LightOut.txt");
+    light->writeToFile("Light.txt");
+}
+
+
+void MainWindow::on_MediumBrightness_clicked(bool checked)
+{
+    if(checked){
+        light->setBrightness(light->getMaxBrightness()*.5);
+        ui->LowBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->MediumBrightness->setCheckState(Qt::CheckState::Checked);
+        ui->HighBrightness->setCheckState(Qt::CheckState::Unchecked);
+    }
+    ui->LightProgressBar->setValue(light->getBrightness());
+    setBarToMedium();
+    light->writeToFile("LightOut.txt");
+    light->writeToFile("Light.txt");
+}
+
+
+void MainWindow::on_HighBrightness_clicked(bool checked)
+{
+    if(checked){
+        light->setBrightness(light->getMaxBrightness()*.8);
+
+        ui->LowBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->MediumBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->HighBrightness->setCheckState(Qt::CheckState::Checked);
+    }
+    ui->LightProgressBar->setValue(light->getBrightness());
+    setBarToHigh();
+    light->writeToFile("LightOut.txt");
+    light->writeToFile("Light.txt");
+}
+
+
 //Fan class below this
 void MainWindow::on_FanSwitch_clicked()
 {
@@ -476,12 +546,12 @@ void MainWindow::flashGroupBox(QGroupBox *groupBox) {
             // Set background color to red
             groupBox->setStyleSheet("QGroupBox { background-color: red; }");
         } else {
-            
-        }
-        // Reset the background color
+            // Reset the background color
             groupBox->setStyleSheet("");
+        }
+
             // Increment the count
-            count++;
+        count++;
        // qDebug() << "Flashing: " << count;
         // Stop the timer after 6 toggles (3 flashes)
         if (count >= 6) {
@@ -494,3 +564,8 @@ void MainWindow::flashGroupBox(QGroupBox *groupBox) {
     // Start the timer with a 500 ms interval
     timer->start(500);
 }
+
+
+
+
+

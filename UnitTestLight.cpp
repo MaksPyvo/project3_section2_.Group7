@@ -39,7 +39,7 @@ void UnitTestLight::testReadFromFile() {
 
     // Test reading from the file
     Light light;
-    light.readFromFile(testFilePath);
+    light.readFromFile("test_light_input.txt");
     QCOMPARE(light.getBrightness(), 60);
     QCOMPARE(light.getMinBrightness(), 10);
     QCOMPARE(light.getMaxBrightness(), 90);
@@ -55,7 +55,7 @@ void UnitTestLight::testWriteToFile() {
     light.setMaxBrightness(85);
 
     // Write to the file
-    light.writeToFile();
+    light.writeToFile("LightOut.txt");
 
     // Read the file back to check content
     QFile file("LightOut.txt");

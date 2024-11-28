@@ -46,11 +46,17 @@ void Heater::ReadFromFile(){
             heat = in.readLine();
             min = in.readLine();
             max = in.readLine();
+            qDebug()<<"values from file heat:"<<heat;
+            qDebug()<<"values from file min:"<<min;
+            qDebug()<<"values from file max:"<<max;
         }
         file.close();
         this->setHeatFlow(heat.toInt());
+        qDebug()<<"values parsed file heat:"<<this->getHeatFlow();
         this->setMinHeat(min.toInt());
+         qDebug()<<"values parsed file min:"<<this->getMinHeat();
         this->setMaxHeat(max.toInt());
+          qDebug()<<"values parsed file max:"<<this->getMaxHeat();
     }
 
     else{

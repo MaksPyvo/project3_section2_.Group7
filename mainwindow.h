@@ -51,6 +51,16 @@ private slots:
 
     void on_SpeedHighLevelCheckbox_clicked(bool checked);
 
+
+    void on_LowBrightness_clicked(bool checked);
+
+    void on_MediumBrightness_clicked(bool checked);
+
+    void on_HighBrightness_clicked(bool checked);
+    void setBarToLow();
+    void setBarToMedium();
+    void setBarToHigh();
+
 public slots:
     void UpdateTemperatureSensor();
     void UpdateHumiditySensor();

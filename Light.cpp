@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QString>
 #include <QDebug>
+#include <QDir>
 
 Light::Light():brightness(0), min(0), max(100){};
 void Light::setBrightness(int brightness){
@@ -24,10 +25,11 @@ void Light::setMaxBrightness(int maxBrightness){
 int Light::getMaxBrightness(){
     return this->max;
 }
-void Light::readFromFile(QString filePath) {
-    QFile fileInput(filePath);
+void Light::readFromFile(QString file) {
+    QFile fileInput(file);
+
     if (!fileInput.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qWarning() << "Failed to open file:" << filePath;
+        qWarning() << "Failed to open file:" << "LightOut.txt";
         return;
     }
 
@@ -50,8 +52,8 @@ void Light::readFromFile(QString filePath) {
     this->setMinBrightness(min.toInt());
     this->setMaxBrightness(max.toInt());
 }
-void Light::writeToFile(){
-    QFile fileOutPut("LightOut.txt");
+void Light::writeToFile(QString fileName){
+    QFile fileOutPut(fileName);
     if(fileOutPut.open(QIODevice::WriteOnly|QIODevice::Text)){
         QTextStream out(&fileOutPut);
         out << this->getBrightness()<<"\n";
