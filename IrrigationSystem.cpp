@@ -1,8 +1,10 @@
 #include "IrrigationSystem.h"
 #include <iostream>
+#include <chrono>
 #include <thread>
-#include <atomic>
-//Irrigation Main functions.
+
+// Group 17 Irrigation implementation
+
 // Constructor initializing the water pump and running flag
 Irrigation::Irrigation(WaterPump* waterPump)
     : waterPump(waterPump), running(true) {}

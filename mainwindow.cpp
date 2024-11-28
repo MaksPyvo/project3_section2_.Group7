@@ -6,6 +6,9 @@
 #include "Light.h"
 #include "Fan.h"
 #include "Exhaust.h"
+//added
+#include "WaterPump.h"
+#include "IrrigationSystem.h"
 #include "qnamespace.h"
 #include <iostream>
 
@@ -38,6 +41,11 @@ MainWindow::MainWindow(QWidget *parent)
     fanObj = new Fan();
     exhaustObj= new Exhaust();
 
+    //added
+    MoistureSensor = new Sensor();
+    waterPump = new WaterPump(MoistureSensor); // Initialize wtr
+    irrigation = new Irrigation(waterPump);
+
     // Disable button when initialize the main window
     ui->OpenExhaustBtn->setDisabled(true);
     ui->CloseExhaustBtn->setDisabled(true);
@@ -53,7 +61,46 @@ MainWindow::~MainWindow()
     delete light;
     delete fanObj;
     delete exhaustObj;
+    delete waterPump;
+    delete irrigation;
 }
+
+//waterpump
+void MainWindow::on_WaterPumpSwitch_clicked()
+{
+    if (waterPump->getPumpStatus() == "OFF") {
+        waterPump->turnOn();
+        ui->textEdit->append("Water pump is ON.");
+    } else {
+        waterPump->turnOff();
+        ui->textEdit->append("Water pump is OFF.");
+    }
+    updatePumpUI();  // Update the pump UI elements
+}
+//update
+void MainWindow::updatePumpUI()
+{
+    ui->PumpRateFlow->setValue(static_cast<int>(waterPump->getPumpRate()));
+    ui->textEdit->append(QString("Current pump rate: %1 L/min").arg(waterPump->getPumpRate()));
+}
+//irrigation
+void MainWindow::on_IrrigationSwitch_clicked()
+{
+    static bool irrigationRunning = false;
+    if (!irrigationRunning) {
+        irrigationRunning = true;
+        std::thread(&Irrigation::irrigationLoop, irrigation).detach();  // Start the irrigation loop in a separate thread
+        ui->textEdit->append("Irrigation system is ACTIVE.");
+    } else {
+        irrigation->stopIrrigation();
+        irrigationRunning = false;
+        ui->textEdit->append("Irrigation system is INACTIVE.");
+    }
+}
+
+
+
+
 // Heater classs
 void MainWindow::on_HeaterSwitch_clicked()
 {
@@ -323,17 +370,7 @@ void MainWindow::on_CloseExhaustBtn_clicked()
 }
 
 
-//Water below this
-void MainWindow::on_WaterPumpSwitch_clicked()
-{
 
-}
-
-
-void MainWindow::on_IrrigationSwitch_clicked()
-{
-
-}
 //sesors below this
 
 void MainWindow::UpdateTemperatureSensor()

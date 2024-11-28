@@ -867,7 +867,7 @@ backgrondcolor:rgb(85, 255, 255)</string>
     <property name="title">
      <string>WaterPump</string>
     </property>
-    <widget class="QPushButton" name="WaterPumpSwitch">
+    <widget class="QPushButton" name="waterPumpSwitch">
      <property name="geometry">
       <rect>
        <x>20</x>
@@ -916,7 +916,7 @@ backgrondcolor:rgb(85, 255, 255)</string>
     <property name="title">
      <string>Irrigation</string>
     </property>
-    <widget class="QPushButton" name="IrrigationSwitch">
+    <widget class="QPushButton" name="irrigationSwitch">
      <property name="geometry">
       <rect>
        <x>10</x>
