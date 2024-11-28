@@ -59,7 +59,6 @@ void Light::writeToFile(QString fileName){
         out << this->getBrightness()<<"\n";
         out << this->getMinBrightness()<<"\n";
         out << this->getMaxBrightness()<<"\n";
-        qDebug()<<"Light was saved on file.";
         fileOutPut.close();
     }
     else{

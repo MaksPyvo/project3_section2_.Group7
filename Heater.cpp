@@ -18,7 +18,7 @@ Heater::Heater(int currentHeat, int maximum, int minimum){
 
 }
 void Heater::setHeatFlow(int heat){
-    if(heat>=getMinHeat() && heat<getMaxHeat()){
+    if(heat>=getMinHeat() && heat<=getMaxHeat()){
         this->heatFlow = heat;
     }
 }
@@ -38,25 +38,19 @@ int Heater::getMinHeat(){
     return this->minHeatFlow;
 }
 void Heater::ReadFromFile(){
-    QString heat, min, max;
+    int heat=0, min=0, max= 0;
     QFile file("Heater.txt");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)){
         QTextStream in(&file);
         if(!in.atEnd()){
-            heat = in.readLine();
-            min = in.readLine();
-            max = in.readLine();
-            qDebug()<<"values from file heat:"<<heat;
-            qDebug()<<"values from file min:"<<min;
-            qDebug()<<"values from file max:"<<max;
+            heat = in.readLine().toInt();
+            min = in.readLine().toInt();
+            max = in.readLine().toInt();
         }
         file.close();
-        this->setHeatFlow(heat.toInt());
-        qDebug()<<"values parsed file heat:"<<this->getHeatFlow();
-        this->setMinHeat(min.toInt());
-         qDebug()<<"values parsed file min:"<<this->getMinHeat();
-        this->setMaxHeat(max.toInt());
-          qDebug()<<"values parsed file max:"<<this->getMaxHeat();
+        this->setHeatFlow(heat);
+        this->setMinHeat(min);
+        this->setMaxHeat(max);
     }
 
     else{

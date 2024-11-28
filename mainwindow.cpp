@@ -134,7 +134,6 @@ void MainWindow::on_HeaterSwitch_clicked()
 void MainWindow::on_HeaterScrollBar_valueChanged(int value)
 {
     heater->setHeatFlow(value);
-    qDebug()<<"setting heat flow to "<<value;
     if(heater->getStatus()){
     ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
     heater->WriteToFile();
@@ -545,7 +544,7 @@ void MainWindow::UpdateMoistureSensor()
 void MainWindow::UpdateIlluminationSensor()
 {
     IlluminationTimer->stop();
-    char fileName[]="Illumination.txt";
+    char fileName[]="Temperature.txt";
     IlluminationSensor->setReadingFileName(fileName);
     IlluminationSensor->readDataFromFile();
     int new_value=IlluminationSensor->getCurrentValue();
