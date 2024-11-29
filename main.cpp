@@ -13,8 +13,8 @@ int main(int argc, char *argv[])
     w.show();
 
     return a.exec();
-    UnitTestHeater unitTestHeater;
-    QTest::qExec(&unitTestHeater, argc, argv);
-    UnitTestLight unitTestLight;
-    QTest::qExec(&unitTestLight, argc, argv);
+    //UnitTestHeater unitTestHeater;
+    //QTest::qExec(&unitTestHeater, argc, argv);
+    //UnitTestLight unitTestLight;
+    //QTest::qExec(&unitTestLight, argc, argv);
 }
