@@ -69,12 +69,6 @@ MainWindow::~MainWindow()
 //waterpump
 void MainWindow::on_WaterPumpSwitch_clicked()
 {
-   /* ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-    if(true){
-         ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-    }else{
-        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
-    }*/
     if (waterPump->getPumpStatus() == "OFF") {
         waterPump->turnOn();
         ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
@@ -95,11 +89,6 @@ void MainWindow::updatePumpUI()
 //irrigation
 void MainWindow::on_IrrigationSwitch_clicked()
 {
-    /*if(true){
-        ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-    }else{
-       ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
-    }*/
 
     static bool irrigationRunning = false;
     if (!irrigationRunning) {

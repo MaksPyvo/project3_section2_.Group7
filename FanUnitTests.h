@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QtTest/QtTest>
-#include "Fan.h"
 
 class FanUnitTests : public QObject
 {
