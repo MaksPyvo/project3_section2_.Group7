@@ -1,4 +1,5 @@
 #include "FanUnitTests.h"
+#include "Fan.h"
 
 FanUnitTests::FanUnitTests() {}
 
@@ -44,8 +45,11 @@ void FanUnitTests::testTurnOff() {
 
 void FanUnitTests::testReadFromFile() {
     Fan fan;
-    fan.readDataFromFile(); // Assuming the file exists and has a valid value
-    QCOMPARE(fan.getSpeedLevel(), 2); // Replace 2 with the expected value from the file
+    int speedLevel = 2;
+    fan.setSpeedLevel(speedLevel);
+    fan.writeDataToFile();
+    fan.readDataFromFile();
+    QCOMPARE(fan.getSpeedLevel(), speedLevel);
 }
 
 void FanUnitTests::testWriteToFile() {

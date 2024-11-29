@@ -5,6 +5,8 @@
 //#include <QCoreApplication>
 #include "UnitTestHeater.h"
 #include "UnitTestLight.h"
+#include "FanUnitTests.h"
+#include "ExhaustUnitTests.h"
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.*=false");
@@ -17,4 +19,10 @@ int main(int argc, char *argv[])
     //QTest::qExec(&unitTestHeater, argc, argv);
     //UnitTestLight unitTestLight;
     //QTest::qExec(&unitTestLight, argc, argv);
+
+    // Fan & Exhaust unit tests
+    // FanUnitTests fanTests;
+    // QTest::qExec(&fanTests, argc, argv);
+    // ExhaustUnitTests exhaustTests;
+    // QTest::qExec(&exhaustTests, argc, argv);
 }
