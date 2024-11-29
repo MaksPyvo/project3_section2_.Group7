@@ -335,7 +335,6 @@ void MainWindow::on_FanSwitch_clicked()
         // Turn on Fan
         fanObj->turnOn();
         fanObj->readDataFromFile();
-        fanObj->changeTemperature();
 
         // Enable all checkboxes
         ui->SpeedLowLevelCheckbox->setDisabled(false);
@@ -358,7 +357,6 @@ void MainWindow::on_SpeedLowLevelCheckbox_clicked(bool checked)
 {
     if (checked) {
         fanObj->setSpeedLevel(1);
-        fanObj->changeTemperature();
         ui->SpeedLowLevelCheckbox->setCheckState(Qt::CheckState::Checked);
         ui->SpeedMediumLevelCheckbox->setCheckState(Qt::CheckState::Unchecked);
         ui->SpeedHighLevelCheckbox->setCheckState(Qt::CheckState::Unchecked);
@@ -374,7 +372,6 @@ void MainWindow::on_SpeedMediumLevelCheckbox_clicked(bool checked)
 {
     if(checked) {
         fanObj->setSpeedLevel(2);
-        fanObj->changeTemperature();
         ui->SpeedLowLevelCheckbox->setCheckState(Qt::CheckState::Unchecked);
         ui->SpeedMediumLevelCheckbox->setCheckState(Qt::CheckState::Checked);
         ui->SpeedHighLevelCheckbox->setCheckState(Qt::CheckState::Unchecked);
