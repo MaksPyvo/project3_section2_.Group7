@@ -3,10 +3,10 @@
 #include <QApplication>
 //#include <QLoggingCategory>
 //#include <QCoreApplication>
-#include "UnitTestHeater.h"
-#include "UnitTestLight.h"
-#include "FanUnitTests.h"
-#include "ExhaustUnitTests.h"
+// #include "UnitTestHeater.h"
+// #include "UnitTestLight.h"
+// #include "FanUnitTests.h"
+// #include "ExhaustUnitTests.h"
 int main(int argc, char *argv[])
 {
     QLoggingCategory::setFilterRules("qt.*=false");
