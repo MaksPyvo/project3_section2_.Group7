@@ -9,7 +9,7 @@
 // #include "ExhaustUnitTests.h"
 int main(int argc, char *argv[])
 {
-    QLoggingCategory::setFilterRules("qt.*=false");
+    //QLoggingCategory::setFilterRules("qt.*=false");
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
