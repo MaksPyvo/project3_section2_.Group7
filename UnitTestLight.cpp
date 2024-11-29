@@ -26,6 +26,22 @@ void UnitTestLight::testSetGetMaxBrightness() {
     light.setMaxBrightness(90);
     QCOMPARE(light.getMaxBrightness(), 90);
 }
+void UnitTestLight::testSetBrightnessBelowMin() {
+    Light light;
+    light.setMinBrightness(0);
+    light.setMaxBrightness(100);
+    light.setBrightness(-10);  // Below the minimum
+    QCOMPARE(light.getBrightness(), 0);  // Should default to minimum
+}
+
+void UnitTestLight::testSetBrightnessAboveMax() {
+    Light light;
+    light.setMinBrightness(0);
+    light.setMaxBrightness(100);
+    light.setBrightness(110);  // Above the maximum
+    QCOMPARE(light.getBrightness(), 0);  // Should default to = 0;
+}
+
 
 void UnitTestLight::testReadFromFile() {
     // Create a temporary file with known values
@@ -40,9 +56,10 @@ void UnitTestLight::testReadFromFile() {
     // Test reading from the file
     Light light;
     light.readFromFile("test_light_input.txt");
-    QCOMPARE(light.getBrightness(), 60);
+
     QCOMPARE(light.getMinBrightness(), 10);
     QCOMPARE(light.getMaxBrightness(), 90);
+    QCOMPARE(light.getBrightness(), 60);
 
     // Clean up the temporary file
     file.remove();
@@ -72,3 +89,15 @@ void UnitTestLight::testWriteToFile() {
     file.remove();
 
 }
+void UnitTestLight::testTurnOn() {
+    Light light;
+    light.turnOn(); // Call the turnOn method (inherited from Device)
+    QVERIFY(light.getStatus()); // Check that the light status is true
+}
+
+void UnitTestLight::testTurnOff() {
+    Light light;
+    light.turnOff(); // Call the turnOff method (inherited from Device)
+    QVERIFY(!light.getStatus()); // Check that the light status is false
+}
+

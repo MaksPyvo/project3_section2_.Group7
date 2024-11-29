@@ -8,19 +8,26 @@
 
 Light::Light():brightness(0), min(0), max(100){};
 void Light::setBrightness(int brightness){
-    this->brightness = brightness;
+    if(this->min<= brightness && brightness <= this->max){
+        this->brightness = brightness;
+   }
+
 }
 int Light::getBrightness(){
     return this->brightness;
 }
 void Light::setMinBrightness(int minBrightness){
-    this->min = minBrightness;
+    if(minBrightness>=0 && minBrightness<100){
+        this->min = minBrightness;
+    }
 }
 int Light::getMinBrightness(){
     return this->min;
 }
 void Light::setMaxBrightness(int maxBrightness){
-    this->max = maxBrightness;
+    if(maxBrightness>=0 && maxBrightness<100){
+        this->max = maxBrightness;
+    }
 }
 int Light::getMaxBrightness(){
     return this->max;
@@ -28,29 +35,34 @@ int Light::getMaxBrightness(){
 void Light::readFromFile(QString file) {
     QFile fileInput(file);
 
-    if (!fileInput.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    if (fileInput.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QString brightness, min, max;
+        QTextStream in(&fileInput);
+
+        // Read lines with error checking
+        if (!in.atEnd()) {
+            brightness = in.readLine();
+            min = in.readLine();
+            max = in.readLine();
+            fileInput.close();
+
+            this->setMinBrightness(min.toInt());
+            this->setMaxBrightness(max.toInt());
+            this->setBrightness(brightness.toInt());
+
+        }
+        else{
+            this->brightness=-1;
+            this->max= 100;
+            this->min= 0;
+        }
+    }
+    else{
         qWarning() << "Failed to open file:" << "LightOut.txt";
-        return;
+        this->brightness=-1;
+        this->max= 100;
+        this->min= 0;
     }
-
-    QString brightness, min, max;
-    QTextStream in(&fileInput);
-
-    // Read lines with error checking
-    if (!in.atEnd()) {
-        brightness = in.readLine();
-    }
-    if (!in.atEnd()) {
-        min = in.readLine();
-    }
-    if (!in.atEnd()) {
-        max = in.readLine();
-    }
-
-    fileInput.close();
-    this->setBrightness(brightness.toInt());
-    this->setMinBrightness(min.toInt());
-    this->setMaxBrightness(max.toInt());
 }
 void Light::writeToFile(QString fileName){
     QFile fileOutPut(fileName);

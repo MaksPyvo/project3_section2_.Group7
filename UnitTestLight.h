@@ -14,5 +14,9 @@ private slots:
     void testSetGetMaxBrightness();
     void testReadFromFile();
     void testWriteToFile();
+    void testTurnOn();
+    void testTurnOff();
+    void testSetBrightnessBelowMin();
+    void testSetBrightnessAboveMax();
 };
 #endif // UNITTESTLIGHT_H

@@ -7,7 +7,7 @@
 
 // Group7-ROB
 class WaterPump : public Device {
-public:
+public: 
     WaterPump(Sensor* sensor);
     void setDesiredMoisture(float desiredLevel);
     float getDesiredMoisture() const;

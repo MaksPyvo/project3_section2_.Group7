@@ -15,7 +15,11 @@ private slots:
     void testSetHeatFlowBelowMin();       // UTC-HTR-004
     void testSetHeatFlowAboveMax();       // UTC-HTR-005
     void testReadFromFile();              // UTC-HTR-006
-    void testWriteToFile();               // Custom addition for completeness
+    void testWriteToFile();
+    void testTurnOn();
+    void testTurnOff();        // Custom addition for completeness
+    void testSetHeatFlowAtMax();
+    void testSetHeatFlowAtMin();
 };
 
 #endif // UNITTESTHEATER_H
