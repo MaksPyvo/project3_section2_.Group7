@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(MoistureTimer,SIGNAL(timeout()),this,SLOT(UpdateMoistureSensor()));
     IlluminationTimer=new QTimer(this);
     connect(IlluminationTimer,SIGNAL(timeout()),this,SLOT(UpdateIlluminationSensor()));
-    TemperatureTimer->start(1000);
+    TemperatureTimer->start(10000);
     HumidityTimer->start(10000);
     MoistureTimer->start(10000);
     IlluminationTimer->start(10000);
@@ -451,7 +451,7 @@ void MainWindow::on_CloseExhaustBtn_clicked()
 
 void MainWindow::UpdateTemperatureSensor()
 {
-    //TemperatureTimer->stop();
+    TemperatureTimer->stop();
     char fileName[]="Temperature.txt";
     TemperatureSensor->setReadingFileName(fileName);
     TemperatureSensor->readDataFromFile();
@@ -463,6 +463,14 @@ void MainWindow::UpdateTemperatureSensor()
     if (previous_temperature != new_temperature) {
         QTimer *timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, [=]() mutable {
+            TemperatureSensor->setReadingFileName(fileName);
+            TemperatureSensor->readDataFromFile();
+            if (previous_temperature == new_temperature || new_temperature==-100) {
+                timer->stop();
+                timer->deleteLater();
+            }
+            new_temperature=TemperatureSensor->getCurrentValue();
+            previous_temperature = ui->TemperatureLine->text().toInt();
             if (previous_temperature < new_temperature) {
                 previous_temperature++;
             } else if (previous_temperature > new_temperature) {
@@ -470,15 +478,11 @@ void MainWindow::UpdateTemperatureSensor()
             }
             ui->TemperatureLine->setText(QString::number(previous_temperature));
 
-            if (previous_temperature == new_temperature) {
-                timer->stop();
-                timer->deleteLater();
-            }
         });
-        timer->start(100); // Update every second
+        timer->start(10000); // Update every second
     }
     }
-    //TemperatureTimer->start(1000);
+    TemperatureTimer->start(10000);
 }
 
 void MainWindow::UpdateHumiditySensor()
@@ -495,19 +499,22 @@ void MainWindow::UpdateHumiditySensor()
         if (previous_value != new_value) {
             QTimer *timer = new QTimer(this);
             connect(timer, &QTimer::timeout, this, [=]() mutable {
+                HumiditySensor->setReadingFileName(fileName);
+                HumiditySensor->readDataFromFile();
+                if (previous_value == new_value || new_value==-100) {
+                    timer->stop();
+                    timer->deleteLater();
+                }
+                new_value=HumiditySensor->getCurrentValue();
+                previous_value = ui->HumidityLine->text().toInt();
                 if (previous_value < new_value) {
                     previous_value=previous_value+5;
                 } else if (previous_value > new_value) {
                     previous_value=previous_value-5;
                 }
-                ui->HumidityLine->setText(QString::number(previous_value));
-
-                if (previous_value == new_value) {
-                    timer->stop();
-                    timer->deleteLater();
-                }
+                ui->HumidityLine->setText(QString::number(previous_value));   
             });
-            timer->start(1000); // Update every second
+            timer->start(10000); // Update every second
         }
 
     }
@@ -528,6 +535,14 @@ void MainWindow::UpdateMoistureSensor()
         if (previous_value != new_value) {
             QTimer *timer = new QTimer(this);
             connect(timer, &QTimer::timeout, this, [=]() mutable {
+                MoistureSensor->setReadingFileName(fileName);
+                MoistureSensor->readDataFromFile();
+                if (previous_value == new_value || new_value==-100) {
+                    timer->stop();
+                    timer->deleteLater();
+                }
+                new_value=MoistureSensor->getCurrentValue();
+                previous_value = ui->MoistureLine->text().toInt();
                 if (previous_value < new_value) {
                     previous_value++;
                 } else if (previous_value > new_value) {
@@ -535,12 +550,8 @@ void MainWindow::UpdateMoistureSensor()
                 }
                 ui->MoistureLine->setText(QString::number(previous_value));
 
-                if (previous_value == new_value) {
-                    timer->stop();
-                    timer->deleteLater();
-                }
             });
-            timer->start(1000); // Update every second
+            timer->start(10000); // Update every second
         }
     }
     MoistureTimer->start(10000);
@@ -558,8 +569,8 @@ void MainWindow::UpdateIlluminationSensor()
     }else{
                 int updated_value = new_value*50;
                 ui->IlluminationLine->setText(QString::number(updated_value));
-        }
     }
+}
         
 void MainWindow::flashGroupBox(QGroupBox *groupBox) {
     int count = 0;
