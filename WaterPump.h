@@ -20,6 +20,7 @@ public:
     std::string getPumpStatus() const;
     float getPumpRate() const;
     void saveFile(const std::string& filename = "PumpStop.txt") const;
+    void saveFileTwo(const std::string& filename = "Moisture.txt") const;
     void readFile(const std::string& filename = "Moisture.txt");
 
 private:

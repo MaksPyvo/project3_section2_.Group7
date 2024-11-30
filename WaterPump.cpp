@@ -3,7 +3,6 @@
 #include <chrono>
 #include <thread>
 #include <fstream>
-
 // Group7
 WaterPump::WaterPump(Sensor* sensor)
     : moistureSensor(sensor), currentMoisture(0.0f), desiredMoisture(50.0f), pumpRate(0.0f), pumpStatus("OFF") {
@@ -13,6 +12,7 @@ WaterPump::WaterPump(Sensor* sensor)
 void WaterPump::setDesiredMoisture(float desiredLevel) {
     if (getPumpStatus() == "ON"){
     if (desiredLevel >= 60.0f && desiredLevel <= 80.0f) {
+        saveFileTwo("Moisture.txt");
         desiredMoisture = desiredLevel;
         turnOn();
         pumpRate = 1.6;
@@ -38,6 +38,7 @@ void WaterPump::checkSoilMoisture(float moistureValue) {
             std::cout << "Desired moisture level reached. Pump is turned OFF." << std::endl;
             // Save the current state to file
             saveFile("PumpStop.txt");
+            saveFileTwo("Moisture.txt");
             currentMoisture = desiredMoisture; //continue here.
         }
 
@@ -90,11 +91,22 @@ float WaterPump::getPumpRate() const {
 
     return pumpRate;
 }
-
+//PumpStop.txt
 void WaterPump::saveFile(const std::string& filename) const {
     std::ofstream outFile(filename);
     if (outFile.is_open()) {
         outFile << currentMoisture << "\n";
+        outFile.close();
+        std::cout << "Pump data saved to " << filename << std::endl;
+    } else {
+        std::cerr << "Error: Unable to open file for writing." << std::endl;
+    }
+}
+//Moisture.txt
+void WaterPump::saveFileTwo(const std::string& filename) const {
+    std::ofstream outFile(filename);
+    if (outFile.is_open()) {
+        outFile << desiredMoisture << "\n";
         outFile.close();
         std::cout << "Pump data saved to " << filename << std::endl;
     } else {

@@ -1197,7 +1197,7 @@ backgrondcolor:rgb(85, 255, 255)</string>
       </rect>
      </property>
      <property name="text">
-      <string>50</string>
+      <string>65</string>
      </property>
      <property name="readOnly">
       <bool>true</bool>
