@@ -1,8 +1,8 @@
-#include<string>
+
 #ifndef DEVICE_H
 #define DEVICE_H
+#include<string>
 
-#endif // DEVICE_H
 
 // Device class interface - made by Maksym Pyvovar - Project III
 using namespace std;
@@ -22,3 +22,4 @@ public:
     bool getWorkingStatus();//returns working status of Device as a bool.
     string getName();//returns name of Device as a string.
 };
+#endif // DEVICE_H

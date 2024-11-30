@@ -1,5 +1,5 @@
 QT       += core gui
-
+QT += testlib
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17
@@ -10,24 +10,40 @@ CONFIG += c++17
 
 SOURCES += \
     Device.cpp \
+    DeviceUnitTest.cpp \
     Exhaust.cpp \
     Fan.cpp \
     Heater.cpp \
     IrrigationSystem.cpp \
     Light.cpp \
     Sensor.cpp \
+    SensorUnitTest.cpp \
+    UnitTestHeater.cpp \
+    UnitTestIrrigationSystem.cpp \
+    UnitTestLight.cpp \
+    FanUnitTests.cpp \
+    ExhaustUnitTests.cpp \
+    UnitTestWaterPump.cpp \
     WaterPump.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     Device.h \
+    DeviceUnitTest.h \
     Exhaust.h \
     Fan.h \
     Heater.h \
     IrrigationSystem.h \
     Light.h \
     Sensor.h \
+    SensorUnitTest.h \
+    UnitTestHeater.h \
+    UnitTestIrrigationSystem.h \
+    UnitTestLight.h \
+    FanUnitTests.h \
+    ExhaustUnitTests.h \
+    UnitTestWaterPump.h \
     WaterPump.h \
     mainwindow.h
 
