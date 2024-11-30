@@ -114,7 +114,7 @@ void MainWindow::updatePumpUI()
         ui->labelRate->setText(QString("Current pump rate: %1 LPM").arg(waterPump->getPumpRate()));
         ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
         ui->labelStatusIrr->setText("Irrigation INACTIVE.");
-        MoistureCheckTimer->stop();
+        //MoistureCheckTimer->stop();
     }
 
 }
