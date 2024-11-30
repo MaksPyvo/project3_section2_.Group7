@@ -70,13 +70,19 @@ MainWindow::~MainWindow()
 //waterpump
 void MainWindow::on_WaterPumpSwitch_clicked()
 {
-    if (waterPump->getPumpStatus() == "OFF" && !ui->textEdit->toPlainText().isEmpty()) {
-        waterPump->turnOn();
-        // Update UI to show pump is on
-        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-        ui->labelStatusWtp->setText("Water pump is ON.");
+    float moistureValue = ui->textEdit->toPlainText().toFloat();
+    if(waterPump->getPumpStatus() == "OFF"){
+        if (!ui->textEdit->toPlainText().isEmpty() && ui->MoistureLine->text().toInt()<moistureValue) {
+            waterPump->turnOn();
+            // Update UI to show pump is on
+            ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
+            ui->labelStatusWtp->setText("Water pump is ON.");
+        }else{
+            flashGroupBox(ui->WaterPumpBox);
+        }
     } else {
         // Turn off the pump if the moisture level matches the desired level
+
         waterPump->turnOff();
         ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
         ui->labelStatusWtp->setText("Water pump is OFF.");
@@ -90,6 +96,7 @@ void MainWindow::updatePumpUI()
     float moistureValue = ui->textEdit->toPlainText().toFloat();
     waterPump->setDesiredMoisture(moistureValue);
     if (waterPump->getPumpStatus() == "ON") {
+        waterPump->saveFileTwo("Moisture.txt");
         // Get the current moisture value from the UI
         float currentMoisture = ui->MoistureLine->text().toFloat();
         // Check if the current moisture level matches the desired moisture level
@@ -133,7 +140,7 @@ void MainWindow::on_HeaterSwitch_clicked()
     //if switch is off turn on and vice versa
     if(!heater->getStatus()){
          heater->ReadFromFile();
-        if(heater->getHeatFlow()<=heater->getMaxHeat() && heater->getHeatFlow()>= heater->getMinHeat()){
+        if(heater->getHeatFlow()<=heater->getMaxHeat() && heater->getHeatFlow()>= heater->getMinHeat() && ui->TemperatureLine->text().toInt()<heater->getHeatFlow()){
             if(!fanObj->getStatus()){
                 heater->turnOn();
                 ui->HeaterScrollBar->setVisible(true);
@@ -592,7 +599,7 @@ void MainWindow::UpdateMoistureSensor()
 
 void MainWindow::UpdateIlluminationSensor()
 {
-    char fileName[]="Illumination.txt";
+    char fileName[]="LightOut.txt";
     IlluminationSensor->setReadingFileName(fileName);
     IlluminationSensor->readDataFromFile();
     int new_value=IlluminationSensor->getCurrentValue();

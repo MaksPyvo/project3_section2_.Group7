@@ -3,6 +3,11 @@
 #include <chrono>
 #include <thread>
 #include <fstream>
+#include <QFile>
+#include <QString.h>
+#include <QTextStream>
+#include <QDebug>
+
 // Group7
 WaterPump::WaterPump(Sensor* sensor)
     : moistureSensor(sensor), currentMoisture(0.0f), desiredMoisture(50.0f), pumpRate(0.0f), pumpStatus("OFF") {
@@ -12,7 +17,6 @@ WaterPump::WaterPump(Sensor* sensor)
 void WaterPump::setDesiredMoisture(float desiredLevel) {
     if (getPumpStatus() == "ON"){
     if (desiredLevel >= 60.0f && desiredLevel <= 80.0f) {
-        saveFileTwo("Moisture.txt");
         desiredMoisture = desiredLevel;
         turnOn();
         pumpRate = 1.6;
@@ -103,7 +107,18 @@ void WaterPump::saveFile(const std::string& filename) const {
     }
 }
 //Moisture.txt
-void WaterPump::saveFileTwo(const std::string& filename) const {
+void WaterPump::saveFileTwo(const QString& filename) const {
+    QFile outFile(filename);
+    if (outFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QTextStream out(&outFile);
+        out << desiredMoisture << "\n";
+        outFile.close();
+        qDebug() << "Pump data saved to" << filename;
+    } else {
+        qWarning() << "Error: Unable to open file for writing.";
+    }
+}
+/*void WaterPump::saveFileTwo(const std::string& filename) const {
     std::ofstream outFile(filename);
     if (outFile.is_open()) {
         outFile << desiredMoisture << "\n";
@@ -113,7 +128,7 @@ void WaterPump::saveFileTwo(const std::string& filename) const {
         std::cerr << "Error: Unable to open file for writing." << std::endl;
     }
 }
-
+*/
 void WaterPump::readFile(const std::string& filename) {
     std::ifstream inFile(filename);
     if (inFile.is_open())

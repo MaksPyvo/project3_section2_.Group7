@@ -867,7 +867,7 @@ backgrondcolor:rgb(85, 255, 255)</string>
      </property>
     </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_5">
+   <widget class="QGroupBox" name="WaterPumpBox">
     <property name="geometry">
      <rect>
       <x>1020</x>
@@ -1237,7 +1237,7 @@ backgrondcolor:rgb(85, 255, 255)</string>
      <x>0</x>
      <y>0</y>
      <width>1402</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>

@@ -1,6 +1,6 @@
 #ifndef WATERPUMP_H
 #define WATERPUMP_H
-
+#include <QString>
 #include <string>
 #include "Sensor.h"
 #include "Device.h"
@@ -20,8 +20,9 @@ public:
     std::string getPumpStatus() const;
     float getPumpRate() const;
     void saveFile(const std::string& filename = "PumpStop.txt") const;
-    void saveFileTwo(const std::string& filename = "Moisture.txt") const;
+    //void saveFileTwo(const std::string& filename = "Moisture.txt") const;
     void readFile(const std::string& filename = "Moisture.txt");
+    void saveFileTwo(const QString& filename) const;
 
 private:
     float currentMoisture;
