@@ -36,10 +36,24 @@ void UnitTestHeater::testSetHeatFlowAboveMax() {
     heater.setHeatFlow(95);  // Above the maximum
     QCOMPARE(heater.getHeatFlow(), 0);  // Heat flow should not change
 }
+void UnitTestHeater::testSetHeatFlowAtMin() {
+    Heater heater;
+    heater.setMinHeat(10);
+    heater.setMaxHeat(90);
+    heater.setHeatFlow(10);  // Exactly at the minimum
+    QCOMPARE(heater.getHeatFlow(), 10);
+}
 
+void UnitTestHeater::testSetHeatFlowAtMax() {
+    Heater heater;
+    heater.setMinHeat(10);
+    heater.setMaxHeat(90);
+    heater.setHeatFlow(90);  // Exactly at the maximum
+    QCOMPARE(heater.getHeatFlow(), 90);
+}
 void UnitTestHeater::testReadFromFile() {
     // Create a temporary test file with known values
-    QString filePath = "HeaterTestInput.txt";
+    QString filePath = "Heater.txt";
     QFile file(filePath);
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QTextStream out(&file);
@@ -73,3 +87,15 @@ void UnitTestHeater::testWriteToFile() {
     // Clean up the output file
     file.remove();
 }
+void UnitTestHeater::testTurnOn() {
+    Heater heater;
+    heater.turnOn(); // Call the turnOn method (inherited from Device)
+    QVERIFY(heater.getStatus()); // Check that the heater status is true
+}
+
+void UnitTestHeater::testTurnOff() {
+    Heater heater;
+    heater.turnOff(); // Call the turnOff method (inherited from Device)
+    QVERIFY(!heater.getStatus()); // Check that the heater status is false
+}
+

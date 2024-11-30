@@ -6,10 +6,14 @@
 #include "Light.h"
 #include "Fan.h"
 #include "Exhaust.h"
+//added
+#include "WaterPump.h"
+#include "IrrigationSystem.h"
 #include "qnamespace.h"
 #include <iostream>
 
-
+#include <QPixmap>
+#include <QDir>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -38,52 +42,113 @@ MainWindow::MainWindow(QWidget *parent)
     fanObj = new Fan();
     exhaustObj= new Exhaust();
 
+    //added
+    MoistureSensor = new Sensor();
+    waterPump = new WaterPump(MoistureSensor); // Initialize wtr
+    irrigation = new Irrigation(waterPump);
+
     // Disable button when initialize the main window
     ui->OpenExhaustBtn->setDisabled(true);
     ui->CloseExhaustBtn->setDisabled(true);
     ui->SpeedLowLevelCheckbox->setDisabled(true);
     ui->SpeedMediumLevelCheckbox->setDisabled(true);
     ui->SpeedHighLevelCheckbox->setDisabled(true);
+    disableCheckBox();
 }
-
-
 MainWindow::~MainWindow()
 {
-    delete ui;
     delete light;
     delete fanObj;
     delete exhaustObj;
+    delete heater;
+    delete waterPump;
+    delete irrigation;
+    delete ui;
 }
+
+//waterpump
+void MainWindow::on_WaterPumpSwitch_clicked()
+{
+    if (waterPump->getPumpStatus() == "OFF") {
+        waterPump->turnOn();
+        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
+        ui->textEdit->append("Water pump is ON.");
+    } else {
+        waterPump->turnOff();
+        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
+        ui->textEdit->append("Water pump is OFF.");
+    }
+    updatePumpUI();  // Update the pump UI elements*/
+}
+//update
+void MainWindow::updatePumpUI()
+{
+    ui->PumpRateFlow->setValue(static_cast<int>(waterPump->getPumpRate()));
+    ui->textEdit->append(QString("Current pump rate: %1 L/min").arg(waterPump->getPumpRate()));
+}
+//irrigation
+void MainWindow::on_IrrigationSwitch_clicked()
+{
+
+    static bool irrigationRunning = false;
+    if (!irrigationRunning) {
+        irrigationRunning = true;
+        ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
+
+        std::thread(&Irrigation::irrigationLoop, irrigation).detach();  // Start the irrigation loop in a separate thread
+        ui->textEdit->append("Irrigation system is ACTIVE.");
+    } else {
+        irrigation->stopIrrigation();
+        irrigationRunning = false;
+        ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
+        ui->textEdit->append("Irrigation system is INACTIVE.");
+    }
+}
+
 // Heater classs
 void MainWindow::on_HeaterSwitch_clicked()
 {
+    if (fanObj->getStatus()) return;
     //if switch is off turn on and vice versa
     if(!heater->getStatus()){
-        heater->turnOn();
-        heater->ReadFromFile();
-        //heater->setHeatFlow(50);
-        ui->HeaterSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-        ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
-         ui->HeaterScrollBar->setValue(static_cast<int>(heater->getHeatFlow()));
+         heater->ReadFromFile();
+        if(heater->getHeatFlow()<=heater->getMaxHeat() && heater->getHeatFlow()>= heater->getMinHeat()){
+            if(!fanObj->getStatus()){
+                heater->turnOn();
+                ui->HeaterScrollBar->setVisible(true);
+                ui->HeaterSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
+                ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
+                ui->HeaterScrollBar->setValue(static_cast<int>(heater->getHeatFlow()));
+                heater->WriteToFile();
+            }
+            ui->FanSwitch->setDisabled(true);
+        }
+        else
+        {
+            flashGroupBox(ui->HeaterBox);
+        }
+
     }
     else{
+        ui->HeaterScrollBar->setVisible(false);
         heater->turnOff();
-        heater->setHeatFlow(0);
+        //heater->setHeatFlow(0);
         ui->HeaterScrollBar->setValue(static_cast<int>(heater->getHeatFlow()));
-        qDebug() << "Current Heat Flow after turning off:" << heater->getHeatFlow();
         ui->HeaterSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
         ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
+        ui->FanSwitch->setDisabled(false);
     }
-    heater->WriteToFile();
+
 
 }
 void MainWindow::on_HeaterScrollBar_valueChanged(int value)
 {
-    heater->setHeatFlow(value);
-    qDebug()<<"setting heat flow to "<<value;
     if(heater->getStatus()){
-    ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
-    heater->WriteToFile();
+        heater->setHeatFlow(value);
+        if(heater->getStatus()){
+            ui->HeaterStatus->setText(QString("Heat Flow:%1").arg(heater->getHeatFlow()));
+            heater->WriteToFile();
+        }
     }
 }
 
@@ -93,47 +158,42 @@ void MainWindow::on_LightButton_clicked()
 {
     ui->LightError->setText(" ");
     if(!(light->getStatus())){
-        light->turnOn();
         light->readFromFile("Light.txt");
-        enableCheckBox();
-        if(light->getBrightness()>0 && light->getBrightness()<=35)
-        {
-            if(!(ui->LowBrightness->isChecked())){
-                ui->LowBrightness->click();
-                ui->MediumBrightness->setDisabled(true);
-                ui->HighBrightness->setDisabled(true);
-            }
+        if(light->getBrightness()>=light->getMinBrightness() && light->getBrightness()<= light->getMaxBrightness()){
+            light->turnOn();
+            enableCheckBox();
+            if(light->getBrightness()>=light->getMinBrightness() && light->getBrightness()<=light->getMaxBrightness()*.3)
+            {
+                if(!(ui->LowBrightness->isChecked())){
+                    ui->LowBrightness->click();
+                    //ui->MediumBrightness->setDisabled(true);
+                    //ui->HighBrightness->setDisabled(true);
+                }
 
-            ui->LightProgressBar->setStyleSheet(
-                "QProgressBar::chunk {"
-                "    background-color: lightblue;"
-                "}");
-            ui->LightButton->setStyleSheet("background-color: green; color: white;");
-        }
-        else if(light->getBrightness()>30 && light->getBrightness()<=60)
-        {
-            if(!(ui->MediumBrightness->isChecked())){
-                ui->MediumBrightness->click();
-                ui->LowBrightness->setDisabled(true);
-                ui->HighBrightness->setDisabled(true);
+                setBarToLow();
+                ui->LightButton->setStyleSheet("background-color: green; color: white;");
             }
+            else if(light->getBrightness()>light->getMaxBrightness()*.3 && light->getBrightness()<=light->getMaxBrightness()*.6)
+            {
+                if(!(ui->MediumBrightness->isChecked())){
+                    ui->MediumBrightness->click();
+                    //ui->LowBrightness->setDisabled(true);
+                    //ui->HighBrightness->setDisabled(true);
+                }
 
-            ui->LightProgressBar->setStyleSheet("QProgressBar::chunk {""    background-color: yellow;""}");
-            ui->LightButton->setStyleSheet("background-color: green; color: white;");
-        }
-        else if (light->getBrightness()>60 && light->getBrightness()<light->getMaxBrightness())
-        {
-            if(!(ui->HighBrightness->isChecked())){
-                ui->HighBrightness->click();
-                ui->MediumBrightness->setDisabled(true);
-                ui->LowBrightness->setDisabled(true);
+                setBarToMedium();
+                ui->LightButton->setStyleSheet("background-color: green; color: white;");
             }
-
-            ui->LightProgressBar->setStyleSheet(
-                "QProgressBar::chunk {"
-                "    background-color: orange;"
-                "}");
-            ui->LightButton->setStyleSheet("background-color: green; color: white;");
+            else if (light->getBrightness()>light->getMaxBrightness()*.6 && light->getBrightness()<=light->getMaxBrightness())
+            {
+                if(!(ui->HighBrightness->isChecked())){
+                    ui->HighBrightness->click();
+                    //ui->MediumBrightness->setDisabled(true);
+                   // ui->LowBrightness->setDisabled(true);
+                }
+                setBarToHigh();
+                ui->LightButton->setStyleSheet("background-color: green; color: white;");
+            }
         }
 
         else{
@@ -141,7 +201,9 @@ void MainWindow::on_LightButton_clicked()
             flashGroupBox(ui->LightBox);
             ui->LightError->setText("Error: Invalid input");
             light->turnOff();
-            light->setBrightness(0);
+            //light->setBrightness(0);
+            //light->setMinBrightness(0);
+            //light->setMaxBrightness(100);
             ui->LightButton->setStyleSheet("background-color: Red; color: white;");
             if(ui->LowBrightness->isChecked()){
                 ui->LowBrightness->setChecked(false);
@@ -153,10 +215,14 @@ void MainWindow::on_LightButton_clicked()
                 ui->HighBrightness->setChecked(false);
             }
             ui->LightProgressBar->setValue(light->getBrightness());
+            disableCheckBox();
+            light->writeToFile("Light.txt");
         }
 
         //ui->LightButton->setStyleSheet("background-color: green; color: white;");
         ui->LightProgressBar->setValue(light->getBrightness());
+        //light->writeToFile("LightOut.txt");
+
     }
     else{
 
@@ -176,7 +242,25 @@ void MainWindow::on_LightButton_clicked()
         ui->LightProgressBar->setValue(light->getBrightness());
 
     }
-    light->writeToFile();
+
+}
+void MainWindow::setBarToLow(){
+    ui->LightProgressBar->setStyleSheet(
+        "QProgressBar::chunk {"
+        "    background-color: lightblue;"
+        "}");
+}
+void MainWindow::setBarToMedium(){
+    ui->LightProgressBar->setStyleSheet(
+        "QProgressBar::chunk {"
+        "    background-color: yellow;"
+        "}");
+}
+void MainWindow::setBarToHigh(){
+    ui->LightProgressBar->setStyleSheet(
+        "QProgressBar::chunk {"
+        "    background-color: orange;"
+        "}");
 }
 void MainWindow::enableCheckBox(){
     ui->LowBrightness->setDisabled(false);
@@ -184,13 +268,61 @@ void MainWindow::enableCheckBox(){
     ui->HighBrightness->setDisabled(false);
 }
 void MainWindow::disableCheckBox(){
+
     ui->LowBrightness->setDisabled(true);
     ui->MediumBrightness->setDisabled(true);
     ui->HighBrightness->setDisabled(true);
 }
+void MainWindow::on_LowBrightness_clicked(bool checked)
+{
+    if(checked){
+        light->setBrightness(light->getMaxBrightness()*.25);
+        ui->LowBrightness->setCheckState(Qt::CheckState::Checked);
+        ui->MediumBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->HighBrightness->setCheckState(Qt::CheckState::Unchecked);
+    }
+    ui->LightProgressBar->setValue(light->getBrightness());
+    setBarToLow();
+    light->writeToFile("LightOut.txt");
+    light->writeToFile("Light.txt");
+}
+
+
+void MainWindow::on_MediumBrightness_clicked(bool checked)
+{
+    if(checked){
+        light->setBrightness(light->getMaxBrightness()*.5);
+        ui->LowBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->MediumBrightness->setCheckState(Qt::CheckState::Checked);
+        ui->HighBrightness->setCheckState(Qt::CheckState::Unchecked);
+    }
+    ui->LightProgressBar->setValue(light->getBrightness());
+    setBarToMedium();
+    light->writeToFile("LightOut.txt");
+    light->writeToFile("Light.txt");
+}
+
+
+void MainWindow::on_HighBrightness_clicked(bool checked)
+{
+    if(checked){
+        light->setBrightness(light->getMaxBrightness()*.8);
+
+        ui->LowBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->MediumBrightness->setCheckState(Qt::CheckState::Unchecked);
+        ui->HighBrightness->setCheckState(Qt::CheckState::Checked);
+    }
+    ui->LightProgressBar->setValue(light->getBrightness());
+    setBarToHigh();
+    light->writeToFile("LightOut.txt");
+    light->writeToFile("Light.txt");
+}
+
+
 //Fan class below this
 void MainWindow::on_FanSwitch_clicked()
 {
+    if (heater->getStatus()) return;
     if (fanObj->getStatus()) {
         // Turn off exhaust device
         fanObj->writeDataToFile();
@@ -208,6 +340,7 @@ void MainWindow::on_FanSwitch_clicked()
 
         // Change switch button color
         ui->FanSwitch->setStyleSheet("background-color: red; color: white;");
+        ui->HeaterSwitch->setDisabled(false);
     }
     else {
         // Turn on Fan
@@ -228,6 +361,7 @@ void MainWindow::on_FanSwitch_clicked()
 
         // Change switch button color
         ui->FanSwitch->setStyleSheet("background-color: green; color: white;");
+        ui->HeaterSwitch->setDisabled(true);
     }
 }
 
@@ -323,17 +457,7 @@ void MainWindow::on_CloseExhaustBtn_clicked()
 }
 
 
-//Water below this
-void MainWindow::on_WaterPumpSwitch_clicked()
-{
 
-}
-
-
-void MainWindow::on_IrrigationSwitch_clicked()
-{
-
-}
 //sesors below this
 
 void MainWindow::UpdateTemperatureSensor()
@@ -345,25 +469,29 @@ void MainWindow::UpdateTemperatureSensor()
     int new_temperature=TemperatureSensor->getCurrentValue();
     int previous_temperature = ui->TemperatureLine->text().toInt();
     if(new_temperature==-100){
-         ui->TemperatureLine->setText("ERROR");
+        ui->TemperatureLine->setText("ERROR");
     }else{
-    if (previous_temperature != new_temperature) {
-        QTimer *timer = new QTimer(this);
-        connect(timer, &QTimer::timeout, this, [=]() mutable {
-            if (previous_temperature < new_temperature) {
-                previous_temperature++;
-            } else if (previous_temperature > new_temperature) {
-                previous_temperature--;
-            }
-            ui->TemperatureLine->setText(QString::number(previous_temperature));
+        if (previous_temperature != new_temperature) {
+            QTimer *timer = new QTimer(this);
+            connect(timer, &QTimer::timeout, this, [=]() mutable {
+                TemperatureSensor->setReadingFileName(fileName);
+                TemperatureSensor->readDataFromFile();
+                if (previous_temperature == new_temperature || new_temperature==-100) {
+                    timer->stop();
+                    timer->deleteLater();
+                }
+                new_temperature=TemperatureSensor->getCurrentValue();
+                previous_temperature = ui->TemperatureLine->text().toInt();
+                if (previous_temperature < new_temperature) {
+                    previous_temperature++;
+                } else if (previous_temperature > new_temperature) {
+                    previous_temperature--;
+                }
+                ui->TemperatureLine->setText(QString::number(previous_temperature));
 
-            if (previous_temperature == new_temperature) {
-                timer->stop();
-                timer->deleteLater();
-            }
-        });
-        timer->start(1000); // Update every second
-    }
+            });
+            timer->start(10000); // Update every second
+        }
     }
     TemperatureTimer->start(10000);
 }
@@ -382,19 +510,22 @@ void MainWindow::UpdateHumiditySensor()
         if (previous_value != new_value) {
             QTimer *timer = new QTimer(this);
             connect(timer, &QTimer::timeout, this, [=]() mutable {
+                HumiditySensor->setReadingFileName(fileName);
+                HumiditySensor->readDataFromFile();
+                if (previous_value == new_value || new_value==-100) {
+                    timer->stop();
+                    timer->deleteLater();
+                }
+                new_value=HumiditySensor->getCurrentValue();
+                previous_value = ui->HumidityLine->text().toInt();
                 if (previous_value < new_value) {
                     previous_value=previous_value+5;
                 } else if (previous_value > new_value) {
                     previous_value=previous_value-5;
                 }
                 ui->HumidityLine->setText(QString::number(previous_value));
-
-                if (previous_value == new_value) {
-                    timer->stop();
-                    timer->deleteLater();
-                }
             });
-            timer->start(1000); // Update every second
+            timer->start(10000); // Update every second
         }
 
     }
@@ -415,6 +546,14 @@ void MainWindow::UpdateMoistureSensor()
         if (previous_value != new_value) {
             QTimer *timer = new QTimer(this);
             connect(timer, &QTimer::timeout, this, [=]() mutable {
+                MoistureSensor->setReadingFileName(fileName);
+                MoistureSensor->readDataFromFile();
+                if (previous_value == new_value || new_value==-100) {
+                    timer->stop();
+                    timer->deleteLater();
+                }
+                new_value=MoistureSensor->getCurrentValue();
+                previous_value = ui->MoistureLine->text().toInt();
                 if (previous_value < new_value) {
                     previous_value++;
                 } else if (previous_value > new_value) {
@@ -422,12 +561,8 @@ void MainWindow::UpdateMoistureSensor()
                 }
                 ui->MoistureLine->setText(QString::number(previous_value));
 
-                if (previous_value == new_value) {
-                    timer->stop();
-                    timer->deleteLater();
-                }
             });
-            timer->start(1000); // Update every second
+            timer->start(10000); // Update every second
         }
     }
     MoistureTimer->start(10000);
@@ -436,36 +571,17 @@ void MainWindow::UpdateMoistureSensor()
 
 void MainWindow::UpdateIlluminationSensor()
 {
-    IlluminationTimer->stop();
     char fileName[]="Illumination.txt";
     IlluminationSensor->setReadingFileName(fileName);
     IlluminationSensor->readDataFromFile();
     int new_value=IlluminationSensor->getCurrentValue();
-    int previous_value = ui->IlluminationLine->text().toInt();
     if(new_value==-100){
         ui->IlluminationLine->setText("ERROR");
     }else{
-        if (previous_value != new_value) {
-            QTimer *timer = new QTimer(this);
-            connect(timer, &QTimer::timeout, this, [=]() mutable {
-                if (previous_value < new_value) {
-                    previous_value=previous_value+50;
-                } else if (previous_value > new_value) {
-                    previous_value=previous_value-50;
-                }
-                ui->IlluminationLine->setText(QString::number(previous_value));
-
-                if (previous_value == new_value) {
-                    timer->stop();
-                    timer->deleteLater();
-                }
-            });
-            timer->start(1000); // Update every second
-        }
+        int updated_value = new_value*50;
+        ui->IlluminationLine->setText(QString::number(updated_value));
     }
-    IlluminationTimer->start(10000);
 }
-        
 void MainWindow::flashGroupBox(QGroupBox *groupBox) {
     int count = 0;
     QTimer *timer = new QTimer(this);
@@ -476,12 +592,12 @@ void MainWindow::flashGroupBox(QGroupBox *groupBox) {
             // Set background color to red
             groupBox->setStyleSheet("QGroupBox { background-color: red; }");
         } else {
-            
-        }
-        // Reset the background color
+            // Reset the background color
             groupBox->setStyleSheet("");
+        }
+
             // Increment the count
-            count++;
+        count++;
        // qDebug() << "Flashing: " << count;
         // Stop the timer after 6 toggles (3 flashes)
         if (count >= 6) {
@@ -494,3 +610,8 @@ void MainWindow::flashGroupBox(QGroupBox *groupBox) {
     // Start the timer with a 500 ms interval
     timer->start(500);
 }
+
+
+
+
+
