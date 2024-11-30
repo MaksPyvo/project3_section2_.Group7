@@ -7,11 +7,11 @@
 
 // Group7-ROB
 class WaterPump : public Device {
-public: 
+public:
     WaterPump(Sensor* sensor);
     void setDesiredMoisture(float desiredLevel);
     float getDesiredMoisture() const;
-    void checkSoilMoisture();
+    void checkSoilMoisture(float);
     void turnOn();
     void turnOff();
     void updatePumpStatus();
@@ -19,8 +19,8 @@ public:
     float getCurrentMoisture() const;
     std::string getPumpStatus() const;
     float getPumpRate() const;
-    void saveFile(const std::string& filename = "default_pump_data.txt") const;
-    void readFile(const std::string& filename = "default_pump_data.txt");
+    void saveFile(const std::string& filename = "PumpStop.txt") const;
+    void readFile(const std::string& filename = "Moisture.txt");
 
 private:
     float currentMoisture;

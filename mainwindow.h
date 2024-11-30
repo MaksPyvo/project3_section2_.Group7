@@ -59,7 +59,7 @@ public slots:
     void disableCheckBox();
     void updatePumpUI();  // Slot to update the pump UI
 
-private:
+public:
     Ui::MainWindow *ui;
     Sensor *TemperatureSensor;
     Sensor *HumiditySensor;
@@ -69,6 +69,8 @@ private:
     QTimer *HumidityTimer;
     QTimer *MoistureTimer;
     QTimer *IlluminationTimer;
+    QTimer *MoistureCheckTimer;
+
     Heater *heater;
     Light *light;
     Fan *fanObj;

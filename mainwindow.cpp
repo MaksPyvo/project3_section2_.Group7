@@ -41,12 +41,12 @@ MainWindow::MainWindow(QWidget *parent)
     light = new Light;
     fanObj = new Fan();
     exhaustObj= new Exhaust();
-
-    //added
     MoistureSensor = new Sensor();
     waterPump = new WaterPump(MoistureSensor); // Initialize wtr
     irrigation = new Irrigation(waterPump);
-
+    MoistureCheckTimer = new QTimer(this);
+    connect(MoistureCheckTimer, &QTimer::timeout, this, &MainWindow::updatePumpUI);
+    MoistureCheckTimer->start(5000);
     // Disable button when initialize the main window
     ui->OpenExhaustBtn->setDisabled(true);
     ui->CloseExhaustBtn->setDisabled(true);
@@ -55,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->SpeedHighLevelCheckbox->setDisabled(true);
     disableCheckBox();
 }
+
 MainWindow::~MainWindow()
 {
     delete light;
@@ -65,43 +66,63 @@ MainWindow::~MainWindow()
     delete irrigation;
     delete ui;
 }
-
+//waterPump->getCurrentMoisture(moistureValue);
 //waterpump
 void MainWindow::on_WaterPumpSwitch_clicked()
 {
-    if (waterPump->getPumpStatus() == "OFF") {
+    if (waterPump->getPumpStatus() == "OFF" && !ui->textEdit->toPlainText().isEmpty()) {
         waterPump->turnOn();
+        // Update UI to show pump is on
         ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-        ui->textEdit->append("Water pump is ON.");
+        ui->labelStatusWtp->setText("Water pump is ON.");
     } else {
+        // Turn off the pump if the moisture level matches the desired level
         waterPump->turnOff();
-        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
-        ui->textEdit->append("Water pump is OFF.");
+        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
+        ui->labelStatusWtp->setText("Water pump is OFF.");
     }
-    updatePumpUI();  // Update the pump UI elements*/
+    updatePumpUI();  // Update the pump UI elements
 }
+
 //update
 void MainWindow::updatePumpUI()
 {
-    ui->PumpRateFlow->setValue(static_cast<int>(waterPump->getPumpRate()));
-    ui->textEdit->append(QString("Current pump rate: %1 L/min").arg(waterPump->getPumpRate()));
+    float moistureValue = ui->textEdit->toPlainText().toFloat();
+    waterPump->setDesiredMoisture(moistureValue);
+    if (waterPump->getPumpStatus() == "ON") {
+        // Get the current moisture value from the UI
+        float currentMoisture = ui->MoistureLine->text().toFloat();
+        // Check if the current moisture level matches the desired moisture level
+        waterPump->checkSoilMoisture(currentMoisture);
+        ui->PumpRateFlow->setValue(static_cast<int>(waterPump->getPumpRate()));
+        ui->labelRate->setText(QString("Current pump rate: %1 LPM").arg(waterPump->getPumpRate()));
+        ui->labelStatusIrr->setText("Irrigation ACTIVE.");
+        ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
+        ui->PumpRateFlow->setValue(100);
+    }else if (waterPump->getPumpStatus() == "OFF"){
+         waterPump->turnOff();
+        ui->PumpRateFlow->setValue(0);
+         ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
+         ui->labelStatusWtp->setText("Water pump is OFF.");
+        ui->labelRate->setText(QString("Current pump rate: %1 LPM").arg(waterPump->getPumpRate()));
+        ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
+        ui->labelStatusIrr->setText("Irrigation INACTIVE.");
+        MoistureCheckTimer->stop();
+    }
+
 }
 //irrigation
 void MainWindow::on_IrrigationSwitch_clicked()
 {
-
-    static bool irrigationRunning = false;
-    if (!irrigationRunning) {
-        irrigationRunning = true;
+    if (waterPump->getPumpStatus()=="ON") {
         ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: Green; color:white; }");
-
         std::thread(&Irrigation::irrigationLoop, irrigation).detach();  // Start the irrigation loop in a separate thread
-        ui->textEdit->append("Irrigation system is ACTIVE.");
+        ui->labelStatusIrr->setText("Irrigation ACTIVE.");
     } else {
         irrigation->stopIrrigation();
-        irrigationRunning = false;
+        ui->WaterPumpSwitch->setStyleSheet("QPushButton { background-color: Red; color:white; }");
         ui->IrrigationSwitch->setStyleSheet("QPushButton { background-color: red; color:white; }");
-        ui->textEdit->append("Irrigation system is INACTIVE.");
+        ui->labelStatusIrr->setText("Irrigation INACTIVE.");
     }
 }
 
