@@ -19,9 +19,11 @@ SOURCES += \
     Sensor.cpp \
     SensorUnitTest.cpp \
     UnitTestHeater.cpp \
+    UnitTestIrrigationSystem.cpp \
     UnitTestLight.cpp \
     FanUnitTests.cpp \
     ExhaustUnitTests.cpp \
+    UnitTestWaterPump.cpp \
     WaterPump.cpp \
     main.cpp \
     mainwindow.cpp
@@ -37,9 +39,11 @@ HEADERS += \
     Sensor.h \
     SensorUnitTest.h \
     UnitTestHeater.h \
+    UnitTestIrrigationSystem.h \
     UnitTestLight.h \
     FanUnitTests.h \
     ExhaustUnitTests.h \
+    UnitTestWaterPump.h \
     WaterPump.h \
     mainwindow.h
 
