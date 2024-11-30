@@ -10,12 +10,14 @@ CONFIG += c++17
 
 SOURCES += \
     Device.cpp \
+    DeviceUnitTest.cpp \
     Exhaust.cpp \
     Fan.cpp \
     Heater.cpp \
     IrrigationSystem.cpp \
     Light.cpp \
     Sensor.cpp \
+    SensorUnitTest.cpp \
     UnitTestHeater.cpp \
     UnitTestLight.cpp \
     FanUnitTests.cpp \
@@ -26,12 +28,14 @@ SOURCES += \
 
 HEADERS += \
     Device.h \
+    DeviceUnitTest.h \
     Exhaust.h \
     Fan.h \
     Heater.h \
     IrrigationSystem.h \
     Light.h \
     Sensor.h \
+    SensorUnitTest.h \
     UnitTestHeater.h \
     UnitTestLight.h \
     FanUnitTests.h \

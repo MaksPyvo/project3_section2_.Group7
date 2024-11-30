@@ -7,12 +7,15 @@
 // #include "UnitTestLight.h"
 // #include "FanUnitTests.h"
 // #include "ExhaustUnitTests.h"
+// #include "DeviceUnitTest.h"
+//#include "SensorUnitTest.h"
 int main(int argc, char *argv[])
 {
     //QLoggingCategory::setFilterRules("qt.*=false");
     QApplication a(argc, argv);
     MainWindow w;
     w.show();
+
     return a.exec();
     //UnitTestHeater unitTestHeater;
     //QTest::qExec(&unitTestHeater, argc, argv);
@@ -24,4 +27,10 @@ int main(int argc, char *argv[])
     // QTest::qExec(&fanTests, argc, argv);
     // ExhaustUnitTests exhaustTests;
     // QTest::qExec(&exhaustTests, argc, argv);
+
+    //DeviceTest unitTestDevice;
+    //return QTest::qExec(&unitTestDevice, argc,argv);
+
+    //SensorTest unitTestSensor;
+    //return QTest::qExec(&unitTestSensor, argc,argv);
 }
